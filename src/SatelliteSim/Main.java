@@ -7,9 +7,9 @@
  *
  */
 
-//last edit done by Mitch M 23:30 3/27/25
+//last edit done by Tim E 07:40 28 Mar 2025
 
-package application;
+package SatelliteSim;
 	
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -83,8 +83,12 @@ public class Main extends Application {
         PhongMaterial earthMaterial = new PhongMaterial();
         try {
             // Use file: protocol for absolute paths
-            String earthPath = "file:C:/PROJECTNAMEHERE/src/Images/earth-d.jpg";
-            earthMaterial.setDiffuseMap(new Image(earthPath));
+            //String earthPath = "file:C:/PROJECTNAMEHERE/src/Images/earth-d.jpg";
+            //earthMaterial.setDiffuseMap(new Image(earthPath));
+            earthMaterial.setDiffuseMap(new Image(getClass().getResourceAsStream("/resources/earth/earth-d.jpg")));
+            earthMaterial.setSelfIlluminationMap(new Image(getClass().getResourceAsStream("/resources/earth/earth-l.jpg")));
+            earthMaterial.setSpecularMap(new Image(getClass().getResourceAsStream("/resources/earth/earth-s.jpg")));
+            earthMaterial.setBumpMap(new Image(getClass().getResourceAsStream("/resources/earth/earth-n.jpg")));
         } catch (Exception e) {
             System.err.println("Error loading Earth texture: " + e.getMessage());
             earthMaterial.setDiffuseColor(Color.BLUE); // Fallback color
@@ -99,7 +103,7 @@ public class Main extends Application {
         ImageView imageView = new ImageView();
         try {
             // Use file: protocol for absolute paths
-            String galaxyPath = "file:C:/PROJECTNAMEHERE/src/Images/galaxy.jpg";
+            String galaxyPath = "/resources/galaxy/galaxy.jpg";
             Image image = new Image(galaxyPath);
             imageView.setImage(image);
             imageView.setPreserveRatio(true);
