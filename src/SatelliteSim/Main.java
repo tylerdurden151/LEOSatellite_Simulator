@@ -62,7 +62,7 @@ public class Main extends Application {
 
         initMouseControl(world, scene, primaryStage);
 
-        primaryStage.setTitle("Genuine Coder");
+        primaryStage.setTitle("SatelliteSimulator");
         primaryStage.setScene(scene);
         primaryStage.show();
 
@@ -83,7 +83,7 @@ public class Main extends Application {
         PhongMaterial earthMaterial = new PhongMaterial();
         try {
             // Use file: protocol for absolute paths
-            String earthPath = "file:C:/Computer Science Major/ProjectOrion/ProjectOrion/src/Images/earth-d.jpg";
+            String earthPath = "file:C:/PROJECTNAMEHERE/src/Images/earth-d.jpg";
             earthMaterial.setDiffuseMap(new Image(earthPath));
         } catch (Exception e) {
             System.err.println("Error loading Earth texture: " + e.getMessage());
@@ -99,7 +99,7 @@ public class Main extends Application {
         ImageView imageView = new ImageView();
         try {
             // Use file: protocol for absolute paths
-            String galaxyPath = "file:C:/Computer Science Major/ProjectOrion/ProjectOrion/src/Images/galaxy.jpg";
+            String galaxyPath = "file:C:/PROJECTNAMEHERE/src/Images/galaxy.jpg";
             Image image = new Image(galaxyPath);
             imageView.setImage(image);
             imageView.setPreserveRatio(true);
