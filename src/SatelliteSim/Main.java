@@ -7,9 +7,10 @@
  *
  */
 
+//last edit done by Mitch M 23:30 3/27/25
 
-package SatelliteSim;
-
+package application;
+	
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.beans.property.DoubleProperty;
@@ -19,10 +20,8 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.Scene;
-import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.ScrollEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Sphere;
@@ -30,12 +29,6 @@ import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
 
-/**
- * @author afsal villan
- * @version 1.0
- *
- * http://www.genuinecoder.com
- */
 public class Main extends Application {
 
     private static final float WIDTH = 1400;
@@ -49,8 +42,7 @@ public class Main extends Application {
 
     private final Sphere sphere = new Sphere(150);
 
-
-    @Override
+    
     public void start(Stage primaryStage) {
         Camera camera = new PerspectiveCamera(true);
         camera.setNearClip(1);
@@ -60,13 +52,9 @@ public class Main extends Application {
         Group world = new Group();
         world.getChildren().add(prepareEarth());
 
-        Slider slider = prepareSlider();
-        world.translateZProperty().bind(slider.valueProperty());
-
         Group root = new Group();
         root.getChildren().add(world);
         root.getChildren().add(prepareImageView());
-        root.getChildren().add(slider);
 
         Scene scene = new Scene(root, WIDTH, HEIGHT, true);
         scene.setFill(Color.SILVER);
@@ -91,37 +79,35 @@ public class Main extends Application {
         timer.start();
     }
 
-    private ImageView prepareImageView() {
-        Image image = new Image(Main.class.getResourceAsStream("/resources/galaxy/galaxy.jpg"));
-        ImageView imageView = new ImageView(image);
-        imageView.setPreserveRatio(true);
-        imageView.getTransforms().add(new Translate(-image.getWidth() / 2, -image.getHeight() / 2, 800));
-        return imageView;
-    }
-
-    private Slider prepareSlider() {
-        Slider slider = new Slider();
-        slider.setMax(800);
-        slider.setMin(-400);
-        slider.setPrefWidth(300d);
-        slider.setLayoutX(-150);
-        slider.setLayoutY(200);
-        slider.setShowTickLabels(true);
-        slider.setTranslateZ(5);
-        slider.setStyle("-fx-base: black");
-        return slider;
-    }
-
     private Node prepareEarth() {
         PhongMaterial earthMaterial = new PhongMaterial();
-        earthMaterial.setDiffuseMap(new Image(getClass().getResourceAsStream("/resources/earth/earth-d.jpg")));
-        earthMaterial.setSelfIlluminationMap(new Image(getClass().getResourceAsStream("/resources/earth/earth-l.jpg")));
-        earthMaterial.setSpecularMap(new Image(getClass().getResourceAsStream("/resources/earth/earth-s.jpg")));
-        earthMaterial.setBumpMap(new Image(getClass().getResourceAsStream("/resources/earth/earth-n.jpg")));
+        try {
+            // Use file: protocol for absolute paths
+            String earthPath = "file:C:/Computer Science Major/ProjectOrion/ProjectOrion/src/Images/earth-d.jpg";
+            earthMaterial.setDiffuseMap(new Image(earthPath));
+        } catch (Exception e) {
+            System.err.println("Error loading Earth texture: " + e.getMessage());
+            earthMaterial.setDiffuseColor(Color.BLUE); // Fallback color
+        }
 
         sphere.setRotationAxis(Rotate.Y_AXIS);
         sphere.setMaterial(earthMaterial);
         return sphere;
+    }
+
+    private ImageView prepareImageView() {
+        ImageView imageView = new ImageView();
+        try {
+            // Use file: protocol for absolute paths
+            String galaxyPath = "file:C:/Computer Science Major/ProjectOrion/ProjectOrion/src/Images/galaxy.jpg";
+            Image image = new Image(galaxyPath);
+            imageView.setImage(image);
+            imageView.setPreserveRatio(true);
+            imageView.getTransforms().add(new Translate(-image.getWidth() / 2, -image.getHeight() / 2, 800));
+        } catch (Exception e) {
+            System.err.println("Error loading galaxy image: " + e.getMessage());
+        }
+        return imageView;
     }
 
     private void initMouseControl(Group group, Scene scene, Stage stage) {
@@ -145,10 +131,9 @@ public class Main extends Application {
             angleX.set(anchorAngleX - (anchorY - event.getSceneY()));
             angleY.set(anchorAngleY + anchorX - event.getSceneX());
         });
+    }
 
-        stage.addEventHandler(ScrollEvent.SCROLL, event -> {
-            double delta = event.getDeltaY();
-            group.translateZProperty().set(group.getTranslateZ() + delta);
-        });
+    public static void main(String[] args) {
+        launch(args);
     }
 }
