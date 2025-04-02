@@ -30,6 +30,27 @@ public class Earth {
         return sphere;
     }
 
+    //Circle FOR EQUATOR ORBIT
+    private Circle prepareOrbitCircle(double heightAboveSurface) {
+        // Radius of the orbit is sphere radius + height above surface
+        double orbitRadius = sphere.getRadius() + heightAboveSurface;
+        
+        // Create a 2D circle
+        Circle circle = new Circle(orbitRadius);
+        circle.setFill(null); // Transparent fill
+        circle.setStroke(Color.RED); // RED outline
+        circle.setStrokeWidth(2.0); // Thickness of the line
+
+        // Rotate 90 degrees around X-axis to align with equator
+        circle.getTransforms().add(new Rotate(90, Rotate.X_AXIS));
+        
+        // Center it with the sphere
+        circle.setTranslateX(0);
+        circle.setTranslateY(0);
+        circle.setTranslateZ(0);
+
+        return circle;
+    }
 
     private static ImageView prepareImageView() {
         ImageView imageView = new ImageView();
