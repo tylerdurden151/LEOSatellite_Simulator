@@ -1,9 +1,5 @@
 package SatelliteSim;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.scene.Group;
-import javafx.scene.Node;
-import javafx.scene.Scene;
+
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
@@ -11,7 +7,6 @@ import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
-import javafx.stage.Stage;
 
 public class Earth {
     private static final Sphere sphere = prepareEarth();
