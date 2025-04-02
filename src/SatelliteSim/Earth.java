@@ -14,8 +14,10 @@ import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
 
 public class Earth {
+    private static final Sphere sphere = prepareEarth();
+    private static final ImageView imageView = prepareImageView();
 
-    public static Sphere prepareEarth() {
+    private static Sphere prepareEarth() {
         Sphere sphere = new Sphere(150);
         PhongMaterial earthMaterial = new PhongMaterial();
         try {
@@ -34,7 +36,7 @@ public class Earth {
     }
 
 
-    public static ImageView prepareImageView() {
+    private static ImageView prepareImageView() {
         ImageView imageView = new ImageView();
         try {
             // Use file: protocol for absolute paths
@@ -48,6 +50,13 @@ public class Earth {
         }
         return imageView;
     }
+    public static Sphere getSphere() {
+        return sphere;
+    }
 
+    public static ImageView getImageView() {
+        return imageView;
+    }
 }
+
 
