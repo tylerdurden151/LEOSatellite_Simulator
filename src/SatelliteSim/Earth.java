@@ -1,0 +1,53 @@
+package SatelliteSim;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.scene.Group;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.PhongMaterial;
+import javafx.scene.shape.Sphere;
+import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Translate;
+import javafx.stage.Stage;
+
+public class Earth {
+
+    public static Sphere prepareEarth() {
+        Sphere sphere = new Sphere(150);
+        PhongMaterial earthMaterial = new PhongMaterial();
+        try {
+            earthMaterial.setDiffuseMap(new Image(Earth.class.getResourceAsStream("/resources/earth/earth-d.jpg")));
+            earthMaterial.setSelfIlluminationMap(new Image(Earth.class.getResourceAsStream("/resources/earth/earth-l.jpg")));
+            earthMaterial.setSpecularMap(new Image(Earth.class.getResourceAsStream("/resources/earth/earth-s.jpg")));
+            earthMaterial.setBumpMap(new Image(Earth.class.getResourceAsStream("/resources/earth/earth-n.jpg")));
+        } catch (Exception e) {
+            System.err.println("Error loading Earth texture: " + e.getMessage());
+            earthMaterial.setDiffuseColor(Color.BLUE); // Fallback color
+        }
+
+        sphere.setRotationAxis(Rotate.Y_AXIS);
+        sphere.setMaterial(earthMaterial);
+        return sphere;
+    }
+
+
+    public static ImageView prepareImageView() {
+        ImageView imageView = new ImageView();
+        try {
+            // Use file: protocol for absolute paths
+            String galaxyPath = "/resources/galaxy/galaxy.jpg";
+            Image image = new Image(galaxyPath);
+            imageView.setImage(image);
+            imageView.setPreserveRatio(true);
+            imageView.getTransforms().add(new Translate(-image.getWidth() / 2, -image.getHeight() / 2, 800));
+        } catch (Exception e) {
+            System.err.println("Error loading galaxy image: " + e.getMessage());
+        }
+        return imageView;
+    }
+
+}
+
