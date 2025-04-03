@@ -1,28 +1,33 @@
-package SatelliteSim;
-
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 
 public class Earth {
-    private static final Sphere sphere = prepareEarth();
-    private static final ImageView imageView = prepareImageView();
+    private final Sphere sphere;
+    private final ImageView imageView;
+    private final Circle orbitCircle;
 
-    private static Sphere prepareEarth() {
+    // Constructor takes a Satellite object to get altitude
+    public Earth(Satellite satellite) {
+        this.sphere = prepareEarth();
+        this.imageView = prepareImageView();
+        this.orbitCircle = prepareOrbitCircle(satellite);
+    }
+
+    private Sphere prepareEarth() {
         Sphere sphere = new Sphere(150);
         PhongMaterial earthMaterial = new PhongMaterial();
         try {
-            earthMaterial.setDiffuseMap(new Image(Earth.class.getResourceAsStream("/resources/earth/earth-d.jpg")));
-            earthMaterial.setSelfIlluminationMap(new Image(Earth.class.getResourceAsStream("/resources/earth/earth-l.jpg")));
-            earthMaterial.setSpecularMap(new Image(Earth.class.getResourceAsStream("/resources/earth/earth-s.jpg")));
-            earthMaterial.setBumpMap(new Image(Earth.class.getResourceAsStream("/resources/earth/earth-n.jpg")));
+            String earthPath = "file:C:/Computer Science Major/ProjectOrion/ProjectOrion/src/Images/earth-d.jpg";
+            earthMaterial.setDiffuseMap(new Image(earthPath));
         } catch (Exception e) {
             System.err.println("Error loading Earth texture: " + e.getMessage());
-            earthMaterial.setDiffuseColor(Color.BLUE); // Fallback color
+            earthMaterial.setDiffuseColor(Color.BLUE);
         }
 
         sphere.setRotationAxis(Rotate.Y_AXIS);
@@ -30,20 +35,21 @@ public class Earth {
         return sphere;
     }
 
-    //Circle FOR EQUATOR ORBIT
-    private Circle prepareOrbitCircle(double heightAboveSurface) {
-        // Radius of the orbit is sphere radius + height above surface
+    private Circle prepareOrbitCircle(Satellite satellite) {
+        // Scale altitude: e.g., 400 km real -> 50 units visual
+        double realAltitude = satellite.getAltitude(); // in meters
+        double heightAboveSurface = (realAltitude / 400_000) * 50; // Proportional scaling
         double orbitRadius = sphere.getRadius() + heightAboveSurface;
-        
+
         // Create a 2D circle
         Circle circle = new Circle(orbitRadius);
         circle.setFill(null); // Transparent fill
-        circle.setStroke(Color.RED); // RED outline
+        circle.setStroke(Color.RED); // Red outline
         circle.setStrokeWidth(2.0); // Thickness of the line
 
         // Rotate 90 degrees around X-axis to align with equator
         circle.getTransforms().add(new Rotate(90, Rotate.X_AXIS));
-        
+
         // Center it with the sphere
         circle.setTranslateX(0);
         circle.setTranslateY(0);
@@ -52,11 +58,11 @@ public class Earth {
         return circle;
     }
 
-    private static ImageView prepareImageView() {
+    private ImageView prepareImageView() {
         ImageView imageView = new ImageView();
         try {
-            // Use file: protocol for absolute paths
-            String galaxyPath = "/resources/galaxy/galaxy.jpg";
+            // Adjusted path for resource loading (relative to classpath)
+            String galaxyPath = "file:C:/Computer Science Major/ProjectOrion/ProjectOrion/src/Images/galaxy.jpg";
             Image image = new Image(galaxyPath);
             imageView.setImage(image);
             imageView.setPreserveRatio(true);
@@ -66,13 +72,16 @@ public class Earth {
         }
         return imageView;
     }
-    public static Sphere getSphere() {
+
+    public Sphere getSphere() {
         return sphere;
     }
 
-    public static ImageView getImageView() {
+    public Circle getOrbitCircle() {
+        return orbitCircle;
+    }
+
+    public ImageView getImageView() {
         return imageView;
     }
 }
-
-
