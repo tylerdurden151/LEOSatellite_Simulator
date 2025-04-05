@@ -12,9 +12,6 @@ import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
 
-import static SatelliteSim.Earth.prepareImageView;
-
-
 public class Simulation {
 
     private static final float WIDTH = 1400;
@@ -24,7 +21,7 @@ public class Simulation {
     private double anchorAngleY = 0;
     private final DoubleProperty angleX = new SimpleDoubleProperty(0);
     private final DoubleProperty angleY = new SimpleDoubleProperty(0);
-    private final Sphere sphere = Earth.prepareEarth();
+    private final Sphere sphere = Earth.getSphere();
     private Satellite satellite;
 
     public void start(Stage primaryStage) {
@@ -36,12 +33,12 @@ public class Simulation {
         Group world = new Group();
         world.getChildren().add(sphere);
 
-        satellite = new Satellite(250, 0.5, Color.RED);
+        satellite = new Satellite(250, 0.5);
         world.getChildren().add(satellite.getBody());
 
         Group root = new Group();
         root.getChildren().add(world);
-        root.getChildren().add(prepareImageView());
+        root.getChildren().add(Earth.getImageView());
 
         Scene scene = new Scene(root, WIDTH, HEIGHT, true);
         scene.setFill(Color.SILVER);

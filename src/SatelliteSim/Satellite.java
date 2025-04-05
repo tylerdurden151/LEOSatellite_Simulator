@@ -12,7 +12,7 @@ public class Satellite {
     private final double orbitRadius;
     private final double orbitSpeed;
 
-    public Satellite(double orbitRadius, double orbitSpeed, Color color) {
+    public Satellite(double orbitRadius, double orbitSpeed) {
         this.orbitRadius = orbitRadius;
         this.orbitSpeed = orbitSpeed;
 
