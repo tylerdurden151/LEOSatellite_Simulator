@@ -38,4 +38,31 @@ public class Satellite {
     public Box getBody() {
         return body;
     }
+/*
+
+    public class Satellite {
+        private double mass;          // kg
+        private double altitude;      // m (height above Earth's surface)
+        private double speed;         // m/s (initial speed, optional)
+        private double area;          // m^2 (directional/cross-sectional area)
+
+        public Satellite(double mass, double altitude, double speed, double area) {
+            if (mass <= 0 || altitude < 0 || speed < 0 || area <= 0) {
+                throw new IllegalArgumentException("Mass and area must be positive, altitude and speed non-negative.");
+            }
+            this.mass = mass;
+            this.altitude = altitude;
+            this.speed = speed;
+            this.area = area;
+        }
+
+        // Getters
+        public double getMass() { return mass; }
+        public double getAltitude() { return altitude; }
+        public double getSpeed() { return speed; }
+        public double getArea() { return area; }
+    }
+
+ */
 }
+
