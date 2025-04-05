@@ -7,6 +7,7 @@ import javafx.scene.Camera;
 import javafx.scene.Group;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.Scene;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Rotate;
@@ -24,6 +25,7 @@ public class Simulation {
     private final DoubleProperty angleX = new SimpleDoubleProperty(0);
     private final DoubleProperty angleY = new SimpleDoubleProperty(0);
     private final Sphere sphere = Earth.getSphere();
+
 
     public void start(Stage primaryStage) {
         Camera camera = new PerspectiveCamera(true);
@@ -84,4 +86,6 @@ public class Simulation {
         };
         timer.start();
     }
+
+
 }
