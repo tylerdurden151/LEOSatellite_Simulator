@@ -32,9 +32,13 @@ public class OrbitalPeriod {
         double radius = EARTH_RADIUS + satellite.getAltitude();
         return Math.sqrt(MU_EARTH / radius);
     }
+
+    /*
     //function test for tyler B----------------------------------------------
     public static void main(String[] args) {
         Satellite testSat = new Satellite(500, 400_000, 0, 4);
         System.out.println();
     }
+
+     */
 }

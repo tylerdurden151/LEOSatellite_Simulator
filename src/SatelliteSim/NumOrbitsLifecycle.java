@@ -19,7 +19,7 @@ public class NumOrbitsLifecycle {
     }
 
     // Calculates number of orbits over entire lifecycle.
-  
+
     public long calculateNumberOfOrbits() {
         double period = OrbitalPeriod.calculatePeriod(satellite);
         return (long) (lifecycleSeconds / period);
@@ -29,8 +29,10 @@ public class NumOrbitsLifecycle {
         return lifecycleSeconds / (365.25 * 24 * 60 * 60);
     }
     //function test for tyler B---------------------------------------------
+    /*
     public static void main(String[] args) {
         Satellite testSat = new Satellite(500, 400_000, 0, 4);
         System.out.println();
     }
+*/
 }

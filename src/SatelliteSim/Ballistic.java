@@ -7,9 +7,12 @@ public class Ballistic {
     public static double calculateBallisticCoefficient(Satellite satellite) {
         return satellite.getMass() / (DRAG_COEFFICIENT * satellite.getArea());
     }
+/*
     //function test for tyler B----------------------
     public static void main(String[] args) {
         Satellite testSat = new Satellite(500, 400_000, 0, 4);
         System.out.println();
     }
+*/
 }
+
