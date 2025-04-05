@@ -99,6 +99,47 @@ import java.sql.SQLException;
                 throw new DatabaseError("Database connection failed", e.getMessage());
             }
         }
+        public int getSatelliteIdByName(String satelliteName) throws DatabaseError {
+            String sql = "SELECT \"Satellite_ID\" FROM \"Satellite\" WHERE \"SatelliteName\" = ?";
+            try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setString(1, satelliteName);
+                ResultSet rs = pstmt.executeQuery();
+                if (rs.next()) {
+                    return rs.getInt("Satellite_ID");
+                } else {
+                    throw new DatabaseError("Satellite not found", "Name: " + satelliteName);
+                }
+            } catch (SQLException e) {
+                throw new DatabaseError("Database connection failed", e.getMessage());
+            }
+        }
+        public String[] getSatelliteNamesAndIds() throws DatabaseError {
+            String sql = "SELECT \"Satellite_ID\", \"SatelliteName\" FROM \"Satellite\"";
+            try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+                 Statement stmt = conn.createStatement();
+                 ResultSet rs = stmt.executeQuery(sql)) {
+
+                // Determine the largest Satellite_ID for array size
+                int maxId = 0;
+                while (rs.next()) {
+                    maxId = Math.max(maxId, rs.getInt("Satellite_ID"));
+                }
+
+                // Create an array of satellite names indexed by Satellite_ID
+                String[] satelliteNames = new String[maxId + 1];
+                rs.beforeFirst(); // Reset the cursor to process rows again
+                while (rs.next()) {
+                    int id = rs.getInt("Satellite_ID");
+                    satelliteNames[id] = rs.getString("SatelliteName");
+                }
+                return satelliteNames;
+
+            } catch (SQLException e) {
+                throw new DatabaseError("Database connection failed", e.getMessage());
+            }
+        }
+
     }
 
 

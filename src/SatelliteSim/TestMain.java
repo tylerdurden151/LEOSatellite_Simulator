@@ -97,6 +97,49 @@ public class TestMain {
         } catch (DatabaseError e) {
             System.out.println("Test Case: Delete nonexistent satellite - Passed | " + e.toString());
         }
+        // Test getSatelliteIdByName()
+        try {
+            int satelliteId = manager.getSatelliteIdByName("Hubble");
+            System.out.println("Test Case: Get Satellite ID by Name - Passed | Satellite ID: " + satelliteId);
+        } catch (DatabaseError e) {
+            System.err.println("Test Case: Get Satellite ID by Name - Failed | " + e.toString());
+        }
+
+        // Test getSatelliteIdByName() for nonexistent name
+        try {
+            manager.getSatelliteIdByName("NonexistentSat");
+            System.out.println("Test Case: Get ID for nonexistent satellite - Failed (Expected DatabaseError)");
+        } catch (DatabaseError e) {
+            System.out.println("Test Case: Get ID for nonexistent satellite - Passed | " + e.toString());
+        }
+
+        // Test getSatelliteNamesAndIds()
+        try {
+            String[] satelliteNames = manager.getSatelliteNamesAndIds();
+            System.out.println("Test Case: Get Satellite Names and IDs - Passed");
+            for (int i = 0; i < satelliteNames.length; i++) {
+                if (satelliteNames[i] != null) {
+                    System.out.println("ID: " + i + ", Name: " + satelliteNames[i]);
+                }
+            }
+        } catch (DatabaseError e) {
+            System.err.println("Test Case: Get Satellite Names and IDs - Failed | " + e.toString());
+        }
+
+        // Test getSatelliteNamesAndIds() for empty database
+        try {
+            // Assuming the database is empty now
+            String[] satelliteNames = manager.getSatelliteNamesAndIds();
+            if (satelliteNames.length == 0) {
+                System.out.println("Test Case: Get Names and IDs for empty database - Passed");
+            } else {
+                System.out.println("Test Case: Get Names and IDs for empty database - Failed");
+            }
+        } catch (DatabaseError e) {
+            System.err.println("Test Case: Get Names and IDs for empty database - Failed | " + e.toString());
+        }
     }
+
+}
 }
 
