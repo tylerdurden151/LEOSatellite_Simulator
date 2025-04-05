@@ -25,6 +25,7 @@ public class Simulation {
     private final DoubleProperty angleX = new SimpleDoubleProperty(0);
     private final DoubleProperty angleY = new SimpleDoubleProperty(0);
     private final Sphere sphere = Earth.prepareEarth();
+    private Satellite satellite;
 
     public void start(Stage primaryStage) {
         Camera camera = new PerspectiveCamera(true);
@@ -34,6 +35,9 @@ public class Simulation {
 
         Group world = new Group();
         world.getChildren().add(sphere);
+
+        satellite = new Satellite(250, 0.5, Color.RED);
+        world.getChildren().add(satellite.getBody());
 
         Group root = new Group();
         root.getChildren().add(world);
@@ -81,6 +85,7 @@ public class Simulation {
             @Override
             public void handle(long now) {
                 sphere.rotateProperty().set(sphere.getRotate() + 0.2);
+                satellite.updatePosition();
             }
         };
         timer.start();
