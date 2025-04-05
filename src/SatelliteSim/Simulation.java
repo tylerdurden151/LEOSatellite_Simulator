@@ -12,6 +12,7 @@ import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
 
+import static SatelliteSim.Earth.prepareImageView;
 
 
 public class Simulation {
@@ -23,7 +24,7 @@ public class Simulation {
     private double anchorAngleY = 0;
     private final DoubleProperty angleX = new SimpleDoubleProperty(0);
     private final DoubleProperty angleY = new SimpleDoubleProperty(0);
-    private final Sphere sphere = Earth.getSphere();
+    private final Sphere sphere = Earth.prepareEarth();
 
     public void start(Stage primaryStage) {
         Camera camera = new PerspectiveCamera(true);
@@ -36,7 +37,7 @@ public class Simulation {
 
         Group root = new Group();
         root.getChildren().add(world);
-        root.getChildren().add(Earth.getImageView());
+        root.getChildren().add(prepareImageView());
 
         Scene scene = new Scene(root, WIDTH, HEIGHT, true);
         scene.setFill(Color.SILVER);

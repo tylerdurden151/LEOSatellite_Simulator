@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="java">
+    <CLASSES />
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$USER_HOME$/Desktop/FOUO/Java Projects/FXyz-master/FXyz-Client/src/main/java" />
+      <root url="file://$USER_HOME$/Desktop/FOUO/Java Projects/FXyz-master/FXyz-Core/src/main/java" />
+      <root url="file://$USER_HOME$/Desktop/FOUO/Java Projects/FXyz-master/FXyz-Core/src/test/java" />
+      <root url="file://$USER_HOME$/Desktop/FOUO/Java Projects/FXyz-master/FXyz-Importers/src/main/java" />
+      <root url="file://$USER_HOME$/Desktop/FOUO/Java Projects/FXyz-master/FXyz-Importers/src/test/java" />
+      <root url="file://$USER_HOME$/Desktop/FOUO/Java Projects/FXyz-master/FXyz-Samples/src/main/java" />
+    </SOURCES>
+  </library>
+</component>
