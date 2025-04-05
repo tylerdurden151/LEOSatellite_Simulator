@@ -1,3 +1,5 @@
+package SatelliteSim;
+
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
@@ -8,26 +10,28 @@ import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 
 public class Earth {
-    private final Sphere sphere;
-    private final ImageView imageView;
-    private final Circle orbitCircle;
+    private static final Sphere sphere = prepareEarth();
+    private static final ImageView imageView = prepareImageView();
+    //private final Circle orbitCircle;
 
     // Constructor takes a Satellite object to get altitude
-    public Earth(Satellite satellite) {
+ /*   public Earth(Satellite satellite) {
         this.sphere = prepareEarth();
         this.imageView = prepareImageView();
         this.orbitCircle = prepareOrbitCircle(satellite);
     }
-
-    private Sphere prepareEarth() {
+*/
+    private static Sphere prepareEarth() {
         Sphere sphere = new Sphere(150);
         PhongMaterial earthMaterial = new PhongMaterial();
         try {
-            String earthPath = "file:C:/Computer Science Major/ProjectOrion/ProjectOrion/src/Images/earth-d.jpg";
-            earthMaterial.setDiffuseMap(new Image(earthPath));
+            earthMaterial.setDiffuseMap(new Image(Earth.class.getResourceAsStream("/resources/earth/earth-d.jpg")));
+            earthMaterial.setSelfIlluminationMap(new Image(Earth.class.getResourceAsStream("/resources/earth/earth-l.jpg")));
+            earthMaterial.setSpecularMap(new Image(Earth.class.getResourceAsStream("/resources/earth/earth-s.jpg")));
+            earthMaterial.setBumpMap(new Image(Earth.class.getResourceAsStream("/resources/earth/earth-n.jpg")));
         } catch (Exception e) {
             System.err.println("Error loading Earth texture: " + e.getMessage());
-            earthMaterial.setDiffuseColor(Color.BLUE);
+            earthMaterial.setDiffuseColor(Color.BLUE); // Fallback color
         }
 
         sphere.setRotationAxis(Rotate.Y_AXIS);
@@ -35,7 +39,7 @@ public class Earth {
         return sphere;
     }
 
-    private Circle prepareOrbitCircle(Satellite satellite) {
+ /*   private Circle prepareOrbitCircle(Satellite satellite) {
         // Scale altitude: e.g., 400 km real -> 50 units visual
         double realAltitude = satellite.getAltitude(); // in meters
         double heightAboveSurface = (realAltitude / 400_000) * 50; // Proportional scaling
@@ -57,12 +61,12 @@ public class Earth {
 
         return circle;
     }
-
-    private ImageView prepareImageView() {
+*/
+    private static ImageView prepareImageView() {
         ImageView imageView = new ImageView();
         try {
-            // Adjusted path for resource loading (relative to classpath)
-            String galaxyPath = "file:C:/Computer Science Major/ProjectOrion/ProjectOrion/src/Images/galaxy.jpg";
+            // Use file: protocol for absolute paths
+            String galaxyPath = "/resources/galaxy/galaxy.jpg";
             Image image = new Image(galaxyPath);
             imageView.setImage(image);
             imageView.setPreserveRatio(true);
@@ -72,16 +76,15 @@ public class Earth {
         }
         return imageView;
     }
-
-    public Sphere getSphere() {
+    public static Sphere getSphere() {
         return sphere;
     }
 
-    public Circle getOrbitCircle() {
+  /*  public Circle getOrbitCircle() {
         return orbitCircle;
     }
-
-    public ImageView getImageView() {
+*/
+    public static ImageView getImageView() {
         return imageView;
     }
 }

@@ -1,4 +1,4 @@
-package application;
+package SatelliteSim;
 
 import javafx.animation.AnimationTimer;
 import javafx.beans.property.DoubleProperty;
@@ -8,6 +8,7 @@ import javafx.scene.Group;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
 
@@ -19,13 +20,13 @@ public class Simulation {
     private double anchorAngleY = 0;
     private final DoubleProperty angleX = new SimpleDoubleProperty(0);
     private final DoubleProperty angleY = new SimpleDoubleProperty(0);
-    private Earth earth; // Instance of Earth instead of static access
-    private Satellite satellite; // To pass to Earth
+    private final Sphere sphere = Earth.getSphere(); // Instance of Earth instead of static access
+    //private Satellite satellite; // To pass to Earth
 
     public void start(Stage primaryStage) {
         // Create a sample Satellite (replace with user input if desired)
-        satellite = new Satellite(500, 400_000, 0, 4); // 500 kg, 400 km, circular, 4 m^2
-        earth = new Earth(satellite); // Initialize Earth with Satellite
+        //satellite = new Satellite(500, 400_000, 0, 4); // 500 kg, 400 km, circular, 4 m^2
+
 
         Camera camera = new PerspectiveCamera(true);
         camera.setNearClip(1);
@@ -33,12 +34,12 @@ public class Simulation {
         camera.translateZProperty().set(-1000);
 
         Group world = new Group();
-        world.getChildren().add(earth.getSphere()); // Add Earth sphere
-        world.getChildren().add(earth.getOrbitCircle()); // Add orbit circle
+        world.getChildren().add(sphere); // Add Earth sphere
+        //world.getChildren().add(earth.getOrbitCircle()); // Add orbit circle
 
         Group root = new Group();
         root.getChildren().add(world);
-        root.getChildren().add(earth.getImageView()); // Use Earth's ImageView
+        root.getChildren().add(Earth.getImageView()); // Use Earth's ImageView
 
         Scene scene = new Scene(root, WIDTH, HEIGHT, true);
         scene.setFill(Color.SILVER);
@@ -80,8 +81,7 @@ public class Simulation {
         AnimationTimer timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
-                earth.getSphere().rotateProperty().set(earth.getSphere().getRotate() + 0.2);
-                // Orbit circle remains fixed (no rotation)
+                sphere.rotateProperty().set(sphere.getRotate() + 0.2);
             }
         };
         timer.start();

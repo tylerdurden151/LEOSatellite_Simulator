@@ -1,4 +1,4 @@
-package application;
+package SatelliteSim    ;
 
 public class Ballistic {
     private static final double DRAG_COEFFICIENT = 2.2; // Typical for satellites

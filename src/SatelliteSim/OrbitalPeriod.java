@@ -1,4 +1,4 @@
-package application;
+package SatelliteSim;
 
 public class OrbitalPeriod {
     private static final double MU_EARTH = 3.986004418e14; // m^3/s^2
