@@ -12,7 +12,11 @@ import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
 
+import static SatelliteSim.Earth.prepareImageView;
+
+
 public class Simulation {
+
     private static final float WIDTH = 1400;
     private static final float HEIGHT = 1000;
     private double anchorX, anchorY;
@@ -20,26 +24,24 @@ public class Simulation {
     private double anchorAngleY = 0;
     private final DoubleProperty angleX = new SimpleDoubleProperty(0);
     private final DoubleProperty angleY = new SimpleDoubleProperty(0);
-    private final Sphere sphere = Earth.getSphere(); // Instance of Earth instead of static access
-    //private Satellite satellite; // To pass to Earth
+    private final Sphere sphere = Earth.prepareEarth();
+    private Satellite satellite;
 
     public void start(Stage primaryStage) {
-        // Create a sample Satellite (replace with user input if desired)
-        //satellite = new Satellite(500, 400_000, 0, 4); // 500 kg, 400 km, circular, 4 m^2
-
-
         Camera camera = new PerspectiveCamera(true);
         camera.setNearClip(1);
         camera.setFarClip(10000);
         camera.translateZProperty().set(-1000);
 
         Group world = new Group();
-        world.getChildren().add(sphere); // Add Earth sphere
-        //world.getChildren().add(earth.getOrbitCircle()); // Add orbit circle
+        world.getChildren().add(sphere);
+
+        satellite = new Satellite(250, 0.5, Color.RED);
+        world.getChildren().add(satellite.getBody());
 
         Group root = new Group();
         root.getChildren().add(world);
-        root.getChildren().add(Earth.getImageView()); // Use Earth's ImageView
+        root.getChildren().add(prepareImageView());
 
         Scene scene = new Scene(root, WIDTH, HEIGHT, true);
         scene.setFill(Color.SILVER);
@@ -77,11 +79,13 @@ public class Simulation {
         });
     }
 
+
     private void prepareAnimation() {
         AnimationTimer timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
                 sphere.rotateProperty().set(sphere.getRotate() + 0.2);
+                satellite.updatePosition();
             }
         };
         timer.start();
