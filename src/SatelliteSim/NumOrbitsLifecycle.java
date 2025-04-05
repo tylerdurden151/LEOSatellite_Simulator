@@ -1,4 +1,4 @@
-package application;
+package SatelliteSim;
 
 public class NumOrbitsLifecycle {
     private static final double DEFAULT_LIFECYCLE_SECONDS = 5 * 365.25 * 24 * 60 * 60; // 5 years

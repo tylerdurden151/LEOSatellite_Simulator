@@ -1,4 +1,4 @@
-package application;
+package SatelliteSim;
 
 public class Retrograde {
     private static final double REENTRY_ALTITUDE = 100_000; // 100 km
