@@ -1,6 +1,6 @@
 package SatelliteSim;
 
-/*
+
 public class AtmosphericDrag {
     private static final double MU_EARTH = 3.986004418e14;
     private static final double EARTH_RADIUS = 6.371e6;
@@ -25,11 +25,13 @@ public class AtmosphericDrag {
         double dragAccel = 0.5 * density * Math.pow(speed, 2) / bc;
         return radius * (dragAccel * period) / speed; // Corrected formula
     }
+    /*
     //function test for tyler B------------------------------------------------
     public static void main(String[] args) {
         Satellite testSat = new Satellite(500, 400_000, 0, 4);
         double decay = calculateDecayPerOrbit(testSat);
         System.out.printf("Decay per orbit: %.4f meters%n", decay);
     }
+    */
 }
-*/
+
