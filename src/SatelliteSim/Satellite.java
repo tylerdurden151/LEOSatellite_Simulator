@@ -18,18 +18,19 @@ public class Satellite {
     // private final Sphere sphere = Earth.getSphere();
 
     public Satellite(String id, double mass, double area, double altitude) {
-        if (mass <= 0 || area <= 0 || altitude < 0 ) {
+        if (mass <= 0 || area <= 0 || altitude < 0) {
             throw new IllegalArgumentException("Mass and area must be positive, altitude and speed non-negative.");
         }
         this.id = id;
         this.mass = mass;
         this.altitude = altitude;
-       //this.speed = speed;
+        //this.speed = speed;
         this.area = area;
 
         // Build visual representation
         this.body = createVisual();
     }
+
     private Box createVisual() {
         // Use area to estimate width/height visually (simplified to square face)
         double size = Math.sqrt(area) * 5; // Scaling factor for visibility
@@ -43,17 +44,43 @@ public class Satellite {
     }
 
     // Accessors
-    public String getId() { return id; }
-    public double getMass() { return mass; }
-    public double getAltitude() { return altitude; }
-    public double getSpeed() { return speed; }
-    public double getArea() { return area; }
-    public double getOrbitRadius() { return orbitRadius; }
-    public double getOrbitSpeed() { return orbitSpeed; }
-    public double getAngle() { return angle; }
-    public Box getBody() { return body; }
-}
-  /*  public void updatePosition() {
+    public String getId() {
+        return id;
+    }
+
+    public double getMass() {
+        return mass;
+    }
+
+    public double getAltitude() {
+        return altitude;
+    }
+
+    public double getSpeed() {
+        return speed;
+    }
+
+    public double getArea() {
+        return area;
+    }
+
+    public double getOrbitRadius() {
+        return orbitRadius;
+    }
+
+    public double getOrbitSpeed() {
+        return orbitSpeed;
+    }
+
+    public double getAngle() {
+        return angle;
+    }
+
+    public Box getBody() {
+        return body;
+    }
+
+    public void updatePosition() {
         angle += orbitSpeed;
         double radians = Math.toRadians(angle);
         double x = orbitRadius * Math.cos(radians);
@@ -61,7 +88,7 @@ public class Satellite {
         body.setTranslateX(x);
         body.setTranslateZ(z);
     }
-*/
+}
 /*
     public class Satellite {
         private double mass;          // kg

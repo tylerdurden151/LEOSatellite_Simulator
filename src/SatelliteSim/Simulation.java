@@ -111,11 +111,7 @@ public class Simulation {
             @Override
             public void handle(long now) {
                 sphere.rotateProperty().set(sphere.getRotate() + 0.2);
-                double x = satellite.getOrbitRadius() * Math.cos(Math.toRadians(satellite.getAngle()));
-                double z = satellite.getOrbitRadius() * Math.sin(Math.toRadians(satellite.getAngle()));
-                satellite.getBody().setTranslateX(x);
-                satellite.getBody().setTranslateZ(z);
-
+                satellite.updatePosition();
             }
         };
         timer.start();
