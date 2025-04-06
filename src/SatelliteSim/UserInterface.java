@@ -19,7 +19,7 @@ public class UserInterface {
 
     private static final double WIDTH = 1400;
     private static final double HEIGHT = 1000;
-
+    private Satellite satellite;
     private ObservableList<VBox> satelliteDataList = FXCollections.observableArrayList();
 
     // For Testing purposes variables
@@ -103,10 +103,7 @@ public class UserInterface {
             int mass = Integer.parseInt(massField.getText());
             int area = Integer.parseInt(areaField.getText());
             int altitude = Integer.parseInt(altitudeField.getText());
-
-            SatelliteData satellite = new SatelliteData(id, mass, area, altitude);
-
-
+            Satellite satellite = new Satellite(id, mass, area, altitude);
             Simulation simulation = new Simulation();
             simulation.start(stage);
         } catch (NumberFormatException _) {
@@ -167,20 +164,20 @@ public class UserInterface {
 
 
     }
-/*
-    public static SatelliteData createNewSatellite (String id, int mass, int area, int altitude){
-        return new SatelliteData (id, mass, area, altitude);
+
+    public static Satellite createNewSatellite (String id, int mass, int area, int altitude){
+        return new Satellite (id, mass, area, altitude);
     }
 
     public static void showSatelliteAddMenu(){
 
     }
-/*
-    public static VBox showSatelliteData (SatelliteData satellite){
-        String idString = "ID: " + satellite.getName();
-        String massString = "Mass: " + satellite.getMass();
-        String areaString = "area; " + satellite.getArea();
-        String altitudeString = "altitude: " + satellite.getAltitude();
+
+    public static VBox showSatelliteData (Satellite satellite){
+        String idString = "ID: " + Satellite.getName();
+        String massString = "Mass: " + Satellite.getMass();
+        String areaString = "area; " + Satellite.getArea();
+        String altitudeString = "altitude: " + Satellite.getAltitude();
 
         Label idLabel = new Label(idString);
         Label massLabel = new Label(massString);
@@ -194,7 +191,7 @@ public class UserInterface {
 
         return dataVbox;
     }
-*/
+
     public VBox createInput (){
 
         Label idLabel = new Label("Satellite Id");

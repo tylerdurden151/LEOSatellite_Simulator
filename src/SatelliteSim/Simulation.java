@@ -33,7 +33,8 @@ public class Simulation {
         Group world = new Group();
         world.getChildren().add(sphere);
 
-        satellite = new Satellite(250, 0.5);
+        satellite = new Satellite(500, 400_000, 0, 4);
+        earth = new Earth(satellite);
         world.getChildren().add(satellite.getBody());
 
         Group root = new Group();
@@ -82,7 +83,11 @@ public class Simulation {
             @Override
             public void handle(long now) {
                 sphere.rotateProperty().set(sphere.getRotate() + 0.2);
-                satellite.updatePosition();
+                double x = orbitRadius * Math.cos(Math.toRadians(angle));
+                double z = orbitRadius * Math.sin(Math.toRadians(angle));
+                satellite.getBody().setTranslateX(x);
+                satellite.getBody().setTranslateZ(z);
+
             }
         };
         timer.start();
