@@ -7,7 +7,7 @@ import javafx.scene.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Rotate;
-import javafx.stage.Stage;
+
 
 public class Simulation {
 

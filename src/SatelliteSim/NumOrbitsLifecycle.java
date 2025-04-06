@@ -28,6 +28,12 @@ public class NumOrbitsLifecycle {
     public double getLifecycleYears() {
         return lifecycleSeconds / (365.25 * 24 * 60 * 60);
     }
+    /*
+    public static double calculateNumberOfOrbits(Satellite satellite) {
+        return new NumOrbitsLifecycle(satellite).calculateNumberOfOrbits();
+    }
+*/
+
     //function test for tyler B---------------------------------------------
     /*
     public static void main(String[] args) {
