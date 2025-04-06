@@ -1,13 +1,12 @@
 package SatelliteSim;
 
 import javafx.scene.image.Image;
-import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
-import javafx.scene.shape.Sphere;
 
 
 public class Satellite {
+    private final String id;
     private final Box body;
     private final double mass;      // in kg
     private final double altitude;  // in meters
@@ -18,10 +17,11 @@ public class Satellite {
     private final double orbitSpeed = 0.5;
     // private final Sphere sphere = Earth.getSphere();
 
-    public Satellite(double mass, double altitude, double speed, double area) {
-        if (mass <= 0 || altitude < 0 || speed < 0 || area <= 0) {
+    public Satellite(String id, double mass, double area, double altitude, double speed ) {
+        if (mass <= 0 || area <= 0 || altitude < 0 || speed < 0) {
             throw new IllegalArgumentException("Mass and area must be positive, altitude and speed non-negative.");
         }
+        this.id = id;
         this.mass = mass;
         this.altitude = altitude;
         this.speed = speed;
@@ -36,19 +36,21 @@ public class Satellite {
         Box visual = new Box(size, size, size / 2);
 
         PhongMaterial material = new PhongMaterial();
-        material.setDiffuseColor(Color.GRAY); // Default color, or add texture
+        material.setDiffuseMap(new Image(getClass().getResource("/resources/satellite/satellite_texture.png").toExternalForm()));
         visual.setMaterial(material);
 
         return visual;
     }
 
     // Accessors
+    public String getId() { return id; }
     public double getMass() { return mass; }
     public double getAltitude() { return altitude; }
     public double getSpeed() { return speed; }
     public double getArea() { return area; }
     public double getOrbitRadius() { return orbitRadius; }
     public double getOrbitSpeed() { return orbitSpeed; }
+    public double getAngle() { return angle; }
     public Box getBody() { return body; }
 }
   /*  public void updatePosition() {
