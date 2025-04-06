@@ -17,8 +17,8 @@ public class Satellite {
     private final double orbitSpeed = 0.5;
     // private final Sphere sphere = Earth.getSphere();
 
-    public Satellite(String id, double mass, double area, double altitude, double speed ) {
-        if (mass <= 0 || area <= 0 || altitude < 0 || speed < 0) {
+    public Satellite(String id, double mass, double area, double altitude) {
+        if (mass <= 0 || area <= 0 || altitude < 0 ) {
             throw new IllegalArgumentException("Mass and area must be positive, altitude and speed non-negative.");
         }
         this.id = id;
