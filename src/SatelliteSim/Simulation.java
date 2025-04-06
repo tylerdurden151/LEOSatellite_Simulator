@@ -56,27 +56,31 @@ public class Simulation {
    */
     public SubScene getSubScene() {
         world = new Group();
+        AmbientLight ambient = new AmbientLight(Color.WHITE);
+        world.getChildren().add(ambient);
+
         PerspectiveCamera camera = new PerspectiveCamera(true);
         camera.setTranslateZ(-1000);
         camera.setNearClip(1);
         camera.setFarClip(10000.0);
 
         world.getChildren().add(sphere);
-
         // earth = new Earth(satellite);
-        world.getChildren().add(Earth.getImageView());
         world.getChildren().add(satellite.getBody());
+        // earth = new Earth(satellite);
+        //world.getChildren().add(Earth.getImageView());
+        world.getChildren().add(Earth.getGalaxySphere());
+
 
         SubScene subScene = new SubScene(world, 800, 600, true, SceneAntialiasing.BALANCED);
-      //  initMouseControl(world, scene, subScene);
-
         subScene.setCamera(camera);
+        initMouseControl(world, camera, subScene);
         prepareAnimation();
 
         return subScene;
     }
 
-    private void initMouseControl(Group world, Scene scene, Stage primaryStage) {
+    private void initMouseControl(Group world, Camera camera, SubScene subScene) {
         Rotate xRotate;
         Rotate yRotate;
         world.getTransforms().addAll(
@@ -86,14 +90,14 @@ public class Simulation {
         xRotate.angleProperty().bind(angleX);
         yRotate.angleProperty().bind(angleY);
 
-        scene.setOnMousePressed(event -> {
+        subScene.setOnMousePressed(event -> {
             anchorX = event.getSceneX();
             anchorY = event.getSceneY();
             anchorAngleX = angleX.get();
             anchorAngleY = angleY.get();
         });
 
-        scene.setOnMouseDragged(event -> {
+        subScene.setOnMouseDragged(event -> {
             angleX.set(anchorAngleX - (anchorY - event.getSceneY()));
             angleY.set(anchorAngleY + anchorX - event.getSceneX());
         });
