@@ -24,9 +24,6 @@ public class UserInterface {
     String testString = "string";
 
 
-
-
-
     public void build(Stage stage) {
         // Labels
         Label idLabel = new Label("Satellite Id");
@@ -69,7 +66,7 @@ public class UserInterface {
         //Phase II
         // HBox speedBox = new HBox(10);
         //speedBox.setAlignment(Pos.CENTER);
-       // speedBox.getChildren().addAll(speedLabel, speedField);
+        // speedBox.getChildren().addAll(speedLabel, speedField);
 
         HBox altitudeBox = new HBox(10);
         altitudeBox.setAlignment(Pos.CENTER);
@@ -105,50 +102,69 @@ public class UserInterface {
 
     }
 
-
-
+    /*
     private void handleCalculation(TextField idField, TextField massField, TextField areaField, TextField altitudeField, Stage stage) {
         try {
             String id = idField.getText();
-            int mass = Integer.parseInt(massField.getText());
-            int area = Integer.parseInt(areaField.getText());
-            int altitude = Integer.parseInt(altitudeField.getText());
-           // int speed = Integer.parseInt(speedField.getText());
+            double mass = Double.parseDouble(massField.getText());
+            double area = Double.parseDouble(areaField.getText());
+            double altitude = Double.parseDouble(altitudeField.getText());
+            //double speed = Double.parseDouble(speedField.getText());
             Satellite satellite = new Satellite(id, mass, area, altitude);
-            Simulation simulation = new Simulation(satellite);
+            this.satellite = satellite;
+            //Simulation simulation = new Simulation(satellite);
             //simulation.start(stage);
-            SubScene simScene = simulation.getSubScene();
-            simScene.setFill(Color.BLACK);
+            double period = OrbitalPeriod.calculatePeriod(satellite);
+            double ballistic = Ballistic.calculateBallisticCoefficient(satellite);
+            //double reentryTime = Retrograde.calculateTimeToReentry(satellite);
 
-            VBox simLayout = new VBox(simScene);
+            // NEW: Reentry time using Retrograde instance
+            Retrograde retro = new Retrograde(satellite);
+            double reentrySeconds = retro.calculateTimeToReentry();
+            String reentryTimeFormatted = retro.getReentryTimeframe();
+
+            //double totalOrbits = NumOrbitsLifecycle.calculateNumberOfOrbits(satellite);
+            NumOrbitsLifecycle orbitsCalc = new NumOrbitsLifecycle(satellite);
+            double totalOrbits = orbitsCalc.calculateNumberOfOrbits();
+
+
+            //SubScene simScene = simulation.getSubScene();
+            // simScene.setFill(Color.BLACK);
+            //VBox simLayout = new VBox(simScene);
 
 
         } catch (NumberFormatException _) {
 
         }
     }
-
-
+*/
 
     private void showAnimation(TextField idField, TextField massField, TextField areaField, TextField altitudeField, Stage stage) {
 
-        addNewSatellite(idField, massField, areaField, altitudeField);
+        // addNewSatellite(idField, massField, areaField, altitudeField);
 
         TabPane layout = new TabPane();
         Tab simTab = new Tab("Simulation");
         //Simulation Tab_________________________________________________________________
         //Create Satellite from user inputs
         String id = idField.getText();
-        int mass = Integer.parseInt(massField.getText());
-        int area = Integer.parseInt(areaField.getText());
-        int altitude = Integer.parseInt(altitudeField.getText());
+        double mass = Double.parseDouble(massField.getText());
+        double area = Double.parseDouble(areaField.getText());
+        double altitude = Double.parseDouble(altitudeField.getText());
         //int speed = Integer.parseInt(speedField.getText());
         //Satellite satellite = new Satellite(id, mass, area, altitude, speed);
-        Satellite satellite = new Satellite(id, mass, area, altitude);
 
-        // Pass satellite into simulation
+        Satellite satellite = new Satellite(id, mass, area, altitude);
+        this.satellite = satellite;
+
+        // Step 3: Perform calculations
+        double period = OrbitalPeriod.calculatePeriod(satellite);
+        double ballistic = Ballistic.calculateBallisticCoefficient(satellite);
+        double totalOrbits = new NumOrbitsLifecycle(satellite).calculateNumberOfOrbits();
+        String reentryFormattedTime = new Retrograde(satellite).getReentryTimeframe();
+
+
         Simulation simulation = new Simulation(satellite);
-       // simulation.start(new Stage());
         SubScene simScene = simulation.getSubScene();
         simScene.setFill(Color.BLACK);
 
@@ -179,13 +195,12 @@ public class UserInterface {
         resultScene.setFill(Color.LIGHTGRAY);
 
         stage.setScene(resultScene);
-    }
+        showSatelliteData(satellite, period, ballistic, totalOrbits, reentryFormattedTime);
 
+}
 
-
-
-
-    public void addNewSatellite (TextField idField, TextField massField, TextField areaField, TextField altitudeField){
+/*
+    public void addNewSatellite(TextField idField, TextField massField, TextField areaField, TextField altitudeField) {
         String id = idField.getText();
         int mass = Integer.parseInt(massField.getText());
         int area = Integer.parseInt(areaField.getText());
@@ -199,33 +214,58 @@ public class UserInterface {
 
 
     }
-// Phase II
+*/
+    // Phase II
+    /*
     public static Satellite createNewSatellite(String id, int mass, int area, int altitude) {
         //return new Satellite(id, mass, area, altitude, speed);
         return new Satellite(id, mass, area, altitude);
     }
+    */
+    //Phase II
+    /*
     public static void showSatelliteAddMenu(){
 
     }
+*/
+    public void showSatelliteData(Satellite satellite,
+                                         double orbitalPeriod,
+                                         double ballistic,
+                                         double totalOrbits,
+                                         String reentryFormattedTime) {
 
-    public static VBox showSatelliteData (Satellite satellite){
         String idString = "ID: " + satellite.getId();
         String massString = "Mass: " + satellite.getMass();
-        String areaString = "area; " + satellite.getArea();
-        String altitudeString = "altitude: " + satellite.getAltitude();
+        String areaString = "Area: " + satellite.getArea();
+        String altitudeString = "Altitude: " + satellite.getAltitude();
+        String periodString = "Orbital Period: " + String.format("%.2f", orbitalPeriod) + " minutes";
+        String ballisticString = "Ballistic Coefficient: " + String.format("%.2f", ballistic);
+        String orbitsString = "Total Orbits Before Reentry: " + String.format("%.0f", totalOrbits);
+        String reentryString = "Estimated Reentry Time: " + reentryFormattedTime;
 
         Label idLabel = new Label(idString);
         Label massLabel = new Label(massString);
         Label areaLabel = new Label(areaString);
         Label altitudeLabel = new Label(altitudeString);
+        Label periodLabel = new Label(periodString);
+        Label ballisticLabel = new Label(ballisticString);
+        Label orbitsLabel = new Label(orbitsString);
+        Label reentryLabel = new Label(reentryString);
 
-        VBox dataVbox = new VBox(idLabel, massLabel, areaLabel, altitudeLabel);
-        dataVbox.setAlignment(Pos.CENTER);
-        dataVbox.setStyle("-fx-padding: 10; -fx-border-color: gray; -fx-border-width: 1;");
+        VBox satelliteBox = new VBox(
+                idLabel, massLabel, areaLabel, altitudeLabel,
+                periodLabel, ballisticLabel, orbitsLabel, reentryLabel
+        );
 
+        satelliteBox.setAlignment(Pos.CENTER_LEFT);
+        satelliteBox.setSpacing(5);
+        satelliteBox.setStyle("-fx-padding: 10; -fx-border-color: gray; -fx-border-width: 1;");
 
-        return dataVbox;
+        // Add to the UI container
+        satelliteDataList.add(satelliteBox);
+
     }
+
 
     public VBox createInput (){
 
@@ -265,9 +305,11 @@ public class UserInterface {
         altitudeBox.getChildren().addAll(altitudeLabel, altitudeTextField);
 
         Button addSatellite = new Button("Add Satellite");
-        addSatellite.setOnAction(e ->{
-            addNewSatellite(idTextField, massTextField, areaTextField, altitudeTextField);
+        addSatellite.setOnAction(e -> {
+            showAnimation(idTextField, massTextField, areaTextField, altitudeTextField, (Stage) addSatellite.getScene().getWindow());
         });
+
+        //  addNewSatellite(idTextField, massTextField, areaTextField, altitudeTextField);
 
         VBox inputBox = new VBox(20, idBox, massBox, areaBox, altitudeBox, addSatellite);
         inputBox.setAlignment(Pos.CENTER);
@@ -277,11 +319,11 @@ public class UserInterface {
 
         return inputBox;
     }
-
+/*
     private String formatString(String id,int mass,int area, int altitude){
         return String.format("ID: %s, Mass: %d kg, Area: %d m², Altitude: %d m", id, mass, area, altitude);
     }
-
+*/
 
 
 

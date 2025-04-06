@@ -30,6 +30,14 @@ public class Retrograde {
         int days = (int) (remainingDays - months * 30.4375);
         return String.format("%d years, %d months, %d days", wholeYears, months, days);
     }
+
+    /*
+    public static double calculateTimeToReentry(Satellite satellite) {
+    return new Retrograde(satellite).calculateTimeToReentry();
+}
+*/
+
+
     /*
     //function test for tyler B--------------------------------------
     public static void main(String[] args) {
