@@ -67,15 +67,13 @@ public class Simulation {
         world.getChildren().add(sphere);
         // earth = new Earth(satellite);
         world.getChildren().add(satellite.getBody());
-        // earth = new Earth(satellite);
-        //world.getChildren().add(Earth.getImageView());
+        //Getting background
         Group backgroundGroup = new Group();
-        backgroundGroup.getChildren().add(Earth.getImageView()); // or getGalaxySphere() if preferred
+        backgroundGroup.getChildren().add(Earth.getImageView());
+
         Group root = new Group();
         root.getChildren().add(backgroundGroup); // static
         root.getChildren().add(world);           // rotates with mouse
-
-
         SubScene subScene = new SubScene(root, 800, 600, true, SceneAntialiasing.BALANCED);
         subScene.setCamera(camera);
         initMouseControl(world, camera, subScene);
