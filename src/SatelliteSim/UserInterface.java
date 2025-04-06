@@ -199,7 +199,7 @@ public class UserInterface {
 
 
     }
-
+// Phase II
     public static Satellite createNewSatellite(String id, int mass, int area, int altitude) {
         //return new Satellite(id, mass, area, altitude, speed);
         return new Satellite(id, mass, area, altitude);
