@@ -4,6 +4,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
+import javafx.scene.shape.CullFace;
 import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
@@ -75,6 +76,27 @@ public class Earth {
         }
         return imageView;
     }
+
+    public static Sphere getGalaxySphere() {
+        Sphere galaxySphere = new Sphere(1500); // Large enough to encompass simulation
+        galaxySphere.setCullFace(CullFace.FRONT); // Invert normals so texture is visible from inside
+
+        PhongMaterial galaxyMaterial = new PhongMaterial();
+        try {
+            String galaxyPath = "/resources/galaxy/galaxy.jpg";
+            Image image = new Image(Earth.class.getResourceAsStream("/resources/galaxy/galaxy.jpg"));
+            System.out.println("Galaxy image loaded: " + image.getWidth() + "x" + image.getHeight());
+
+            galaxyMaterial.setDiffuseMap(image);
+        } catch (Exception e) {
+            System.err.println("Error loading galaxy texture: " + e.getMessage());
+        }
+
+        galaxySphere.setMaterial(galaxyMaterial);
+        return galaxySphere;
+    }
+
+
     public static Sphere getSphere() {
         return sphere;
     }
