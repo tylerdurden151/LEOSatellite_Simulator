@@ -3,16 +3,13 @@ package SatelliteSim;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.SubScene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class UserInterface {
@@ -35,6 +32,7 @@ public class UserInterface {
         Label idLabel = new Label("Satellite Id");
         Label massLabel = new Label("Mass");
         Label areaLabel = new Label("Area");
+        Label speedLabel = new Label("Speed (m/s)");
         Label altitudeLabel = new Label("Altitude");
 
         // Text fields
@@ -47,8 +45,12 @@ public class UserInterface {
         TextField areaTextField = new TextField(testIntString);
         areaTextField.setPromptText("area in square Meters");
 
+        TextField speedField = new TextField();
+        speedField.setPromptText("Speed (m/s)");
+
         TextField altitudeTextField = new TextField(testIntString);
         altitudeTextField.setPromptText("altitude in meters");
+
 
         // HBoxes
         HBox idBox = new HBox(10);
@@ -63,18 +65,24 @@ public class UserInterface {
         areaBox.setAlignment(Pos.CENTER);
         areaBox.getChildren().addAll(areaLabel, areaTextField);
 
+        HBox speedBox = new HBox(10);
+        speedBox.setAlignment(Pos.CENTER);
+        speedBox.getChildren().addAll(speedLabel, speedField);
+
         HBox altitudeBox = new HBox(10);
         altitudeBox.setAlignment(Pos.CENTER);
         altitudeBox.getChildren().addAll(altitudeLabel, altitudeTextField);
 
-        VBox inputBox = new VBox(15, idBox, massBox, areaBox, altitudeBox);
+        VBox inputBox = new VBox(15, idBox, massBox, areaBox, speedBox, altitudeBox);
         inputBox.setAlignment(Pos.CENTER);
         inputBox.setStyle("-fx-padding: 20; -fx-alignment: center;");
+
 
         // Buttons
         Button calcButton = new Button("Calculate");
         calcButton.setOnAction(e -> {
-            showAnimation(idTextField, massTextField, areaTextField, altitudeTextField, stage);
+            showAnimation(idTextField, massTextField, areaTextField, altitudeTextField, speedField, stage);
+
         });
 
         // Pane Setup
@@ -97,15 +105,22 @@ public class UserInterface {
 
 
 
-    private void handleCalculation(TextField idField, TextField massField, TextField areaField, TextField altitudeField, Stage stage) {
+    private void handleCalculation(TextField idField, TextField massField, TextField areaField, TextField altitudeField, TextField speedField, Stage stage) {
         try {
             String id = idField.getText();
             int mass = Integer.parseInt(massField.getText());
             int area = Integer.parseInt(areaField.getText());
             int altitude = Integer.parseInt(altitudeField.getText());
-            Satellite satellite = new Satellite(id, mass, area, altitude);
-            Simulation simulation = new Simulation();
-            simulation.start(stage);
+            int speed = Integer.parseInt(speedField.getText());
+            Satellite satellite = new Satellite(id, mass, area, altitude, speed);
+            Simulation simulation = new Simulation(satellite);
+            //simulation.start(stage);
+            SubScene simScene = simulation.getSubScene();
+            simScene.setFill(Color.BLACK);
+
+            VBox simLayout = new VBox(simScene);
+
+
         } catch (NumberFormatException _) {
 
         }
@@ -113,12 +128,29 @@ public class UserInterface {
 
 
 
-    private void showAnimation(TextField idField, TextField massField, TextField areaField, TextField altitudeField, Stage stage) {
+    private void showAnimation(TextField idField, TextField massField, TextField areaField, TextField altitudeField, TextField speedField, Stage stage) {
 
         addNewSatellite(idField, massField, areaField, altitudeField);
 
         TabPane layout = new TabPane();
         Tab simTab = new Tab("Simulation");
+        //Simulation Tab_________________________________________________________________
+        //Create Satellite from user inputs
+        String id = idField.getText();
+        int mass = Integer.parseInt(massField.getText());
+        int area = Integer.parseInt(areaField.getText());
+        int altitude = Integer.parseInt(altitudeField.getText());
+        int speed = Integer.parseInt(speedField.getText());
+        Satellite satellite = new Satellite(id, mass, area, altitude, speed);
+
+        // Pass satellite into simulation
+        Simulation simulation = new Simulation(satellite);
+       // simulation.start(new Stage());
+        SubScene simScene = simulation.getSubScene();
+        simScene.setFill(Color.BLACK);
+
+        VBox simLayout = new VBox(simScene);
+        simTab.setContent(simLayout);
 
         //UI Tab__________________________________________________________________________
         ListView<VBox> listView = new ListView<>(satelliteDataList);
@@ -165,19 +197,18 @@ public class UserInterface {
 
     }
 
-    public static Satellite createNewSatellite (String id, int mass, int area, int altitude){
-        return new Satellite (id, mass, area, altitude);
+    public static Satellite createNewSatellite(String id, int mass, int area, int altitude, int speed) {
+        return new Satellite(id, mass, area, altitude, speed);
     }
-
     public static void showSatelliteAddMenu(){
 
     }
 
     public static VBox showSatelliteData (Satellite satellite){
-        String idString = "ID: " + Satellite.getName();
-        String massString = "Mass: " + Satellite.getMass();
-        String areaString = "area; " + Satellite.getArea();
-        String altitudeString = "altitude: " + Satellite.getAltitude();
+        String idString = "ID: " + satellite.getId();
+        String massString = "Mass: " + satellite.getMass();
+        String areaString = "area; " + satellite.getArea();
+        String altitudeString = "altitude: " + satellite.getAltitude();
 
         Label idLabel = new Label(idString);
         Label massLabel = new Label(massString);

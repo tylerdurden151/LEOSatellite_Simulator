@@ -3,10 +3,7 @@ package SatelliteSim;
 import javafx.animation.AnimationTimer;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.scene.Camera;
-import javafx.scene.Group;
-import javafx.scene.PerspectiveCamera;
-import javafx.scene.Scene;
+import javafx.scene.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Rotate;
@@ -23,8 +20,12 @@ public class Simulation {
     private final DoubleProperty angleY = new SimpleDoubleProperty(0);
     private final Sphere sphere = Earth.getSphere();
     private Satellite satellite;
+    private Group world;
 
-    public void start(Stage primaryStage) {
+   public Simulation(Satellite satellite) {
+       this.satellite = satellite;
+   }
+/*    public void start(Stage primaryStage) {
         Camera camera = new PerspectiveCamera(true);
         camera.setNearClip(1);
         camera.setFarClip(10000);
@@ -33,8 +34,7 @@ public class Simulation {
         Group world = new Group();
         world.getChildren().add(sphere);
 
-        satellite = new Satellite(500, 400_000, 0, 4);
-        earth = new Earth(satellite);
+       // earth = new Earth(satellite);
         world.getChildren().add(satellite.getBody());
 
         Group root = new Group();
@@ -52,6 +52,28 @@ public class Simulation {
         primaryStage.show();
 
         prepareAnimation();
+    }
+   */
+    public SubScene getSubScene() {
+        world = new Group();
+        PerspectiveCamera camera = new PerspectiveCamera(true);
+        camera.setTranslateZ(-1000);
+        camera.setNearClip(1);
+        camera.setFarClip(10000.0);
+
+        world.getChildren().add(sphere);
+
+        // earth = new Earth(satellite);
+        world.getChildren().add(Earth.getImageView());
+        world.getChildren().add(satellite.getBody());
+
+        SubScene subScene = new SubScene(world, 800, 600, true, SceneAntialiasing.BALANCED);
+      //  initMouseControl(world, scene, subScene);
+
+        subScene.setCamera(camera);
+        prepareAnimation();
+
+        return subScene;
     }
 
     private void initMouseControl(Group world, Scene scene, Stage primaryStage) {
@@ -83,8 +105,8 @@ public class Simulation {
             @Override
             public void handle(long now) {
                 sphere.rotateProperty().set(sphere.getRotate() + 0.2);
-                double x = orbitRadius * Math.cos(Math.toRadians(angle));
-                double z = orbitRadius * Math.sin(Math.toRadians(angle));
+                double x = satellite.getOrbitRadius() * Math.cos(Math.toRadians(satellite.getAngle()));
+                double z = satellite.getOrbitRadius() * Math.sin(Math.toRadians(satellite.getAngle()));
                 satellite.getBody().setTranslateX(x);
                 satellite.getBody().setTranslateZ(z);
 
