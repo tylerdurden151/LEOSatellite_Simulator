@@ -10,7 +10,7 @@ public class Satellite {
     private final Box body;
     private final double mass;      // in kg
     private final double altitude;  // in meters
-    private final double speed;     // in m/s (optional for now)
+    private final double speed = 0;     // in m/s (optional for now)
     private final double area;
     private double angle = 0;
     private final double orbitRadius = 250;
@@ -24,7 +24,7 @@ public class Satellite {
         this.id = id;
         this.mass = mass;
         this.altitude = altitude;
-        this.speed = speed;
+       //this.speed = speed;
         this.area = area;
 
         // Build visual representation

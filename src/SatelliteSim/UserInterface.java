@@ -45,8 +45,9 @@ public class UserInterface {
         TextField areaTextField = new TextField(testIntString);
         areaTextField.setPromptText("area in square Meters");
 
-        TextField speedField = new TextField();
-        speedField.setPromptText("Speed (m/s)");
+        // Phase II
+        // TextField speedField = new TextField();
+        //speedField.setPromptText("Speed (m/s)");
 
         TextField altitudeTextField = new TextField(testIntString);
         altitudeTextField.setPromptText("altitude in meters");
@@ -65,15 +66,16 @@ public class UserInterface {
         areaBox.setAlignment(Pos.CENTER);
         areaBox.getChildren().addAll(areaLabel, areaTextField);
 
-        HBox speedBox = new HBox(10);
-        speedBox.setAlignment(Pos.CENTER);
-        speedBox.getChildren().addAll(speedLabel, speedField);
+        //Phase II
+        // HBox speedBox = new HBox(10);
+        //speedBox.setAlignment(Pos.CENTER);
+       // speedBox.getChildren().addAll(speedLabel, speedField);
 
         HBox altitudeBox = new HBox(10);
         altitudeBox.setAlignment(Pos.CENTER);
         altitudeBox.getChildren().addAll(altitudeLabel, altitudeTextField);
 
-        VBox inputBox = new VBox(15, idBox, massBox, areaBox, speedBox, altitudeBox);
+        VBox inputBox = new VBox(15, idBox, massBox, areaBox, altitudeBox);
         inputBox.setAlignment(Pos.CENTER);
         inputBox.setStyle("-fx-padding: 20; -fx-alignment: center;");
 
@@ -81,7 +83,7 @@ public class UserInterface {
         // Buttons
         Button calcButton = new Button("Calculate");
         calcButton.setOnAction(e -> {
-            showAnimation(idTextField, massTextField, areaTextField, altitudeTextField, speedField, stage);
+            showAnimation(idTextField, massTextField, areaTextField, altitudeTextField, stage);
 
         });
 
@@ -105,14 +107,14 @@ public class UserInterface {
 
 
 
-    private void handleCalculation(TextField idField, TextField massField, TextField areaField, TextField altitudeField, TextField speedField, Stage stage) {
+    private void handleCalculation(TextField idField, TextField massField, TextField areaField, TextField altitudeField, Stage stage) {
         try {
             String id = idField.getText();
             int mass = Integer.parseInt(massField.getText());
             int area = Integer.parseInt(areaField.getText());
             int altitude = Integer.parseInt(altitudeField.getText());
-            int speed = Integer.parseInt(speedField.getText());
-            Satellite satellite = new Satellite(id, mass, area, altitude, speed);
+           // int speed = Integer.parseInt(speedField.getText());
+            Satellite satellite = new Satellite(id, mass, area, altitude);
             Simulation simulation = new Simulation(satellite);
             //simulation.start(stage);
             SubScene simScene = simulation.getSubScene();
@@ -128,7 +130,7 @@ public class UserInterface {
 
 
 
-    private void showAnimation(TextField idField, TextField massField, TextField areaField, TextField altitudeField, TextField speedField, Stage stage) {
+    private void showAnimation(TextField idField, TextField massField, TextField areaField, TextField altitudeField, Stage stage) {
 
         addNewSatellite(idField, massField, areaField, altitudeField);
 
@@ -140,8 +142,9 @@ public class UserInterface {
         int mass = Integer.parseInt(massField.getText());
         int area = Integer.parseInt(areaField.getText());
         int altitude = Integer.parseInt(altitudeField.getText());
-        int speed = Integer.parseInt(speedField.getText());
-        Satellite satellite = new Satellite(id, mass, area, altitude, speed);
+        //int speed = Integer.parseInt(speedField.getText());
+        //Satellite satellite = new Satellite(id, mass, area, altitude, speed);
+        Satellite satellite = new Satellite(id, mass, area, altitude);
 
         // Pass satellite into simulation
         Simulation simulation = new Simulation(satellite);
@@ -197,8 +200,9 @@ public class UserInterface {
 
     }
 
-    public static Satellite createNewSatellite(String id, int mass, int area, int altitude, int speed) {
-        return new Satellite(id, mass, area, altitude, speed);
+    public static Satellite createNewSatellite(String id, int mass, int area, int altitude) {
+        //return new Satellite(id, mass, area, altitude, speed);
+        return new Satellite(id, mass, area, altitude);
     }
     public static void showSatelliteAddMenu(){
 
