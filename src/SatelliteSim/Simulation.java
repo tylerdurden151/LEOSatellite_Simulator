@@ -3,15 +3,14 @@ package application;
 import javafx.animation.AnimationTimer;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.scene.Camera;
-import javafx.scene.Group;
-import javafx.scene.PerspectiveCamera;
-import javafx.scene.Scene;
+import javafx.scene.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Rotate;
-import javafx.stage.Stage;
+
 
 public class Simulation {
+
     private static final float WIDTH = 1400;
     private static final float HEIGHT = 1000;
     private double anchorX, anchorY;
@@ -19,26 +18,28 @@ public class Simulation {
     private double anchorAngleY = 0;
     private final DoubleProperty angleX = new SimpleDoubleProperty(0);
     private final DoubleProperty angleY = new SimpleDoubleProperty(0);
-    private Earth earth; // Instance of Earth instead of static access
-    private Satellite satellite; // To pass to Earth
+    private final Sphere sphere = Earth.getSphere();
+    private Satellite satellite;
+    private Group world;
 
-    public void start(Stage primaryStage) {
-        // Create a sample Satellite (replace with user input if desired)
-        satellite = new Satellite(500, 400_000, 0, 4); // 500 kg, 400 km, circular, 4 m^2
-        earth = new Earth(satellite); // Initialize Earth with Satellite
-
+   public Simulation(Satellite satellite) {
+       this.satellite = satellite;
+   }
+/*    public void start(Stage primaryStage) {
         Camera camera = new PerspectiveCamera(true);
         camera.setNearClip(1);
         camera.setFarClip(10000);
         camera.translateZProperty().set(-1000);
 
         Group world = new Group();
-        world.getChildren().add(earth.getSphere()); // Add Earth sphere
-        world.getChildren().add(earth.getOrbitCircle()); // Add orbit circle
+        world.getChildren().add(sphere);
+
+       // earth = new Earth(satellite);
+        world.getChildren().add(satellite.getBody());
 
         Group root = new Group();
         root.getChildren().add(world);
-        root.getChildren().add(earth.getImageView()); // Use Earth's ImageView
+        root.getChildren().add(Earth.getImageView());
 
         Scene scene = new Scene(root, WIDTH, HEIGHT, true);
         scene.setFill(Color.SILVER);
@@ -52,8 +53,36 @@ public class Simulation {
 
         prepareAnimation();
     }
+   */
+    public SubScene getSubScene() {
+        world = new Group();
+        AmbientLight ambient = new AmbientLight(Color.WHITE);
+        world.getChildren().add(ambient);
 
-    private void initMouseControl(Group world, Scene scene, Stage primaryStage) {
+        PerspectiveCamera camera = new PerspectiveCamera(true);
+        camera.setTranslateZ(-1000);
+        camera.setNearClip(1);
+        camera.setFarClip(10000.0);
+
+        world.getChildren().add(sphere);
+        // earth = new Earth(satellite);
+        world.getChildren().add(satellite.getBody());
+        //Getting background
+        Group backgroundGroup = new Group();
+        backgroundGroup.getChildren().add(Earth.getImageView());
+
+        Group root = new Group();
+        root.getChildren().add(backgroundGroup); // static
+        root.getChildren().add(world);           // rotates with mouse
+        SubScene subScene = new SubScene(root, 800, 600, true, SceneAntialiasing.BALANCED);
+        subScene.setCamera(camera);
+        initMouseControl(world, camera, subScene);
+        prepareAnimation();
+
+        return subScene;
+    }
+
+    private void initMouseControl(Group world, Camera camera, SubScene subScene) {
         Rotate xRotate;
         Rotate yRotate;
         world.getTransforms().addAll(
@@ -63,25 +92,26 @@ public class Simulation {
         xRotate.angleProperty().bind(angleX);
         yRotate.angleProperty().bind(angleY);
 
-        scene.setOnMousePressed(event -> {
+        subScene.setOnMousePressed(event -> {
             anchorX = event.getSceneX();
             anchorY = event.getSceneY();
             anchorAngleX = angleX.get();
             anchorAngleY = angleY.get();
         });
 
-        scene.setOnMouseDragged(event -> {
+        subScene.setOnMouseDragged(event -> {
             angleX.set(anchorAngleX - (anchorY - event.getSceneY()));
             angleY.set(anchorAngleY + anchorX - event.getSceneX());
         });
     }
 
+
     private void prepareAnimation() {
         AnimationTimer timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
-                earth.getSphere().rotateProperty().set(earth.getSphere().getRotate() + 0.2);
-                // Orbit circle remains fixed (no rotation)
+                sphere.rotateProperty().set(sphere.getRotate() + 0.2);
+                satellite.updatePosition();
             }
         };
         timer.start();
