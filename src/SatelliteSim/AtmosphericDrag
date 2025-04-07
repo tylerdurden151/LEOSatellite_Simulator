@@ -15,7 +15,7 @@ public class AtmosphericDrag {
         double altitude = satellite.getAltitude();
         double radius = EARTH_RADIUS + altitude;
         
-        double speed = (satellite.getSpeed() > 0) ? satellite.getSpeed() : OrbitalPeriod.calculateCircularSpeed(satellite);
+        double speed = OrbitalPeriod.calculateCircularSpeed(satellite);
         double period = OrbitalPeriod.calculatePeriod(satellite);
         
         double density = calculateDensity(altitude);
@@ -26,7 +26,7 @@ public class AtmosphericDrag {
     }
     //function test for tyler B------------------------------------------------
     public static void main(String[] args) {
-        Satellite testSat = new Satellite(500, 400_000, 0, 4);
+        Satellite testSat = new Satellite("Mercury", 500, 4, 400_000);
         double decay = calculateDecayPerOrbit(testSat);
         System.out.printf("Decay per orbit: %.4f meters%n", decay);
     }
