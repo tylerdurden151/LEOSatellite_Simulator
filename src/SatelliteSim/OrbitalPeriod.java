@@ -13,18 +13,9 @@ public class OrbitalPeriod {
         return 2 * Math.PI * Math.sqrt(Math.pow(radius, 3) / MU_EARTH);
     }
 
-    //Calculates period from speed (circular orbit), returns Period in seconds
-    public static double calculatePeriodFromSpeed(Satellite satellite) {
-        double speed = satellite.getSpeed();
-        if (speed <= 0) {
-            throw new IllegalArgumentException("Speed must be positive.");
-        }
-        return 2 * Math.PI * MU_EARTH / Math.pow(speed, 3);
-    }
-
     //Default period calculation (speed if provided, else altitude).
     public static double calculatePeriod(Satellite satellite) {
-        return (satellite.getSpeed() > 0) ? calculatePeriodFromSpeed(satellite) : calculatePeriodFromAltitude(satellite);
+        return (calculatePeriodFromAltitude(satellite));
     }
 
     //Calculates circular orbit speed for a given altitude, Speed in m/s
@@ -34,7 +25,12 @@ public class OrbitalPeriod {
     }
     //function test for tyler B----------------------------------------------
     public static void main(String[] args) {
-        Satellite testSat = new Satellite(500, 400_000, 0, 4);
-        System.out.println();
+        Satellite testSat = new Satellite("Pegasus", 500, 4, 400_000);
+        
+        double period = OrbitalPeriod.calculatePeriod(testSat);
+        double circSpeed = OrbitalPeriod.calculateCircularSpeed(testSat);
+        
+        System.out.println("Orbital period in seconds: " + period);
+        System.out.println("Circular speed m/s: " + circSpeed);
     }
 }
