@@ -30,7 +30,9 @@ public class NumOrbitsLifecycle {
     }
     //function test for tyler B---------------------------------------------
     public static void main(String[] args) {
-        Satellite testSat = new Satellite(500, 400_000, 0, 4);
-        System.out.println();
+        Satellite testSat = new Satellite("Hercules", 500, 4, 400_000);
+        NumOrbitsLifecycle lifecycle = new NumOrbitsLifecycle(testSat);
+        long numberOfOrbits = lifecycle.calculateNumberOfOrbits();
+        System.out.println("Number of orbits made over lifecycle " + numberOfOrbits);
     }
 }
