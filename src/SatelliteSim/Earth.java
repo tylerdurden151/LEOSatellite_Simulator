@@ -1,25 +1,27 @@
+package application;
+
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
-import javafx.scene.shape.Circle;
+import javafx.scene.shape.CullFace;
 import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 
 public class Earth {
-    private final Sphere sphere;
-    private final ImageView imageView;
-    private final Circle orbitCircle;
+    private static final Sphere sphere = prepareEarth();
+    private static final ImageView imageView = prepareImageView();
+    //private final Circle orbitCircle;
 
     // Constructor takes a Satellite object to get altitude
-    public Earth(Satellite satellite) {
+ /*   public Earth(Satellite satellite) {
         this.sphere = prepareEarth();
         this.imageView = prepareImageView();
         this.orbitCircle = prepareOrbitCircle(satellite);
     }
-
-    private Sphere prepareEarth() {
+*/
+    private static Sphere prepareEarth() {
         Sphere sphere = new Sphere(150);
         PhongMaterial earthMaterial = new PhongMaterial();
         try {
@@ -27,7 +29,7 @@ public class Earth {
             earthMaterial.setDiffuseMap(new Image(earthPath));
         } catch (Exception e) {
             System.err.println("Error loading Earth texture: " + e.getMessage());
-            earthMaterial.setDiffuseColor(Color.BLUE);
+            earthMaterial.setDiffuseColor(Color.BLUE); // Fallback color
         }
 
         sphere.setRotationAxis(Rotate.Y_AXIS);
@@ -35,7 +37,7 @@ public class Earth {
         return sphere;
     }
 
-    private Circle prepareOrbitCircle(Satellite satellite) {
+ /*   private Circle prepareOrbitCircle(Satellite satellite) {
         // Scale altitude: e.g., 400 km real -> 50 units visual
         double realAltitude = satellite.getAltitude(); // in meters
         double heightAboveSurface = (realAltitude / 400_000) * 50; // Proportional scaling
@@ -57,11 +59,11 @@ public class Earth {
 
         return circle;
     }
-
-    private ImageView prepareImageView() {
+*/
+    private static ImageView prepareImageView() {
         ImageView imageView = new ImageView();
         try {
-            // Adjusted path for resource loading (relative to classpath)
+            // Use file: protocol for absolute paths
             String galaxyPath = "file:C:/Computer Science Major/ProjectOrion/ProjectOrion/src/Images/galaxy.jpg";
             Image image = new Image(galaxyPath);
             imageView.setImage(image);
@@ -73,9 +75,19 @@ public class Earth {
         return imageView;
     }
 
-    public Sphere getSphere() {
+
+    public static Sphere getSphere() {
         return sphere;
     }
+
+  /*  public Circle getOrbitCircle() {
+        return orbitCircle;
+    }
+*/
+    public static ImageView getImageView() {
+        return imageView;
+    }
+}
 
     public Circle getOrbitCircle() {
         return orbitCircle;
