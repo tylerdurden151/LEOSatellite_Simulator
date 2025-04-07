@@ -10,11 +10,12 @@ public class Retrograde {
     
     //calculates re-entry in seconds
     public double calculateTimeToReentry() {
-        double currentAltitude = satellite.getAltitude();
+    	double currentAltitude = satellite.getAltitude();
         if (currentAltitude <= REENTRY_ALTITUDE) {
             return 0;
         }
-        double decayPerOrbit = AtmosphericDrag.calculateDecayPerOrbit(satellite);
+        
+        double decayPerOrbit =  AtmosphericDrag.calculateDecayPerOrbit(satellite);
         double period = OrbitalPeriod.calculatePeriod(satellite);
         double orbitsToReentry = (currentAltitude - REENTRY_ALTITUDE) / decayPerOrbit;
         return orbitsToReentry * period;
@@ -32,7 +33,8 @@ public class Retrograde {
     }
     //function test for tyler B--------------------------------------
     public static void main(String[] args) {
-        Satellite testSat = new Satellite(500, 400_000, 0, 4);
-        System.out.println();
+        Satellite testSat = new Satellite("Neptune", 500, 4, 400_000);
+        Retrograde retro = new Retrograde(testSat);
+        System.out.println("Reentry Timeframe: " + retro.getReentryTimeframe());
     }
 }
