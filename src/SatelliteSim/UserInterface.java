@@ -324,14 +324,4 @@ public class UserInterface {
         return String.format("ID: %s, Mass: %d kg, Area: %d m², Altitude: %d m", id, mass, area, altitude);
     }
 */
-
-
-
-
-
-
-
-
-
-
 }
