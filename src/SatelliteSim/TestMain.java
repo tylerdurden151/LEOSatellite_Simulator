@@ -6,14 +6,8 @@ public class TestMain {
 
         // Test adding a valid satellite
         try {
-            Satellite satellite = new Satellite();
-            satellite.setSatelliteName("Hubble");
-            satellite.setUserID(1L);
-            satellite.setMass(11110.5);
-            satellite.setAltitude(547.12);
-            satellite.setSpeed(7.66);
-            satellite.setArea(4.7);
-            manager.addSatellite(satellite);
+            Satellite satellite = new Satellite(1,"Hubble",11110.5,4.7,547.12);
+           manager.addSatellite(satellite);
             System.out.println("Test Case: Add valid satellite - Passed");
         } catch (SatelliteError e) {
             System.err.println("Test Case: Add valid satellite - Failed | " + e.toString());
@@ -21,13 +15,8 @@ public class TestMain {
 
         // Test adding an invalid satellite (negative mass)
         try {
-            Satellite satellite = new Satellite();
-            satellite.setSatelliteName("InvalidSat");
-            satellite.setUserID(2L);
-            satellite.setMass(-5.0); // Invalid mass
-            satellite.setAltitude(500.0);
-            satellite.setSpeed(5.5);
-            satellite.setArea(3.5);
+            Satellite satellite = new Satellite(1,"InvalidSat",-5.0,3.5,500.0);
+
             manager.addSatellite(satellite);
             System.out.println("Test Case: Add invalid satellite - Failed (Expected ValidationError)");
         } catch (ValidationError e) {
@@ -37,7 +26,7 @@ public class TestMain {
         // Test getting a satellite by ID
         try {
             Satellite satellite = manager.getSatelliteById(1);
-            System.out.println("Test Case: Get satellite by ID - Passed | Satellite Name: " + satellite.getSatelliteName());
+            System.out.println("Test Case: Get satellite by ID - Passed | Satellite Name: " + satellite.getId());
         } catch (SatelliteError e) {
             System.err.println("Test Case: Get satellite by ID - Failed | " + e.toString());
         }
@@ -52,14 +41,9 @@ public class TestMain {
 
         // Test updating a valid satellite
         try {
-            Satellite satellite = new Satellite();
-            satellite.setSatelliteID(1); // Existing ID
-            satellite.setSatelliteName("UpdatedHubble");
-            satellite.setUserID(1L);
-            satellite.setMass(12000.8);
-            satellite.setAltitude(600.5);
-            satellite.setSpeed(8.12);
-            satellite.setArea(5.5);
+            Satellite satellite = new Satellite(1,"Hubble",12000.8,5.5,600.5);
+            satellite.setSatellite_ID(manager.getSatelliteIdByName("Hubble")); // Existing ID
+
             manager.updateSatellite(satellite);
             System.out.println("Test Case: Update valid satellite - Passed");
         } catch (SatelliteError e) {
@@ -68,18 +52,15 @@ public class TestMain {
 
         // Test updating a satellite with invalid mass
         try {
-            Satellite satellite = new Satellite();
-            satellite.setSatelliteID(1); // Existing ID
-            satellite.setSatelliteName("InvalidUpdate");
-            satellite.setUserID(1L);
-            satellite.setMass(-10.0); // Invalid mass
-            satellite.setAltitude(500.0);
-            satellite.setSpeed(5.5);
-            satellite.setArea(3.5);
+            Satellite satellite = new Satellite(1,"Hubble",-10.0,3.5,500.0);
+            satellite.setSatellite_ID(manager.getSatelliteIdByName("Hubble")); // Existing ID
+
             manager.updateSatellite(satellite);
             System.out.println("Test Case: Update invalid satellite - Failed (Expected ValidationError)");
         } catch (ValidationError e) {
             System.out.println("Test Case: Update invalid satellite - Passed | " + e.toString());
+        } catch (DatabaseError e) {
+            throw new RuntimeException(e);
         }
 
         // Test deleting a satellite by ID
