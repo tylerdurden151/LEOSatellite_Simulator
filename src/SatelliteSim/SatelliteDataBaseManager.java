@@ -1,12 +1,9 @@
 package SatelliteSim;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 
 
-    public class SatelliteDataBaseManager {
+public class SatelliteDataBaseManager {
         private static final String URL = "jdbc:postgresql://localhost:5432/SatelliteSimulator";
         private static final String USER = "postgres";
         private static final String PASSWORD = "your_password";
@@ -20,14 +17,9 @@ import java.sql.SQLException;
                 pstmt.setInt(1, id);
                 ResultSet rs = pstmt.executeQuery();
                 if (rs.next()) {
-                    satellite = new Satellite();
-                    satellite.setSatelliteID(rs.getInt("Satellite_ID"));
-                    satellite.setSatelliteName(rs.getString("SatelliteName"));
-                    satellite.setUserID(rs.getLong("User_ID"));
-                    satellite.setMass(rs.getDouble("Mass"));
-                    satellite.setAltitude(rs.getDouble("Altitude"));
-                    satellite.setSpeed(rs.getDouble("Speed"));
-                    satellite.setArea(rs.getDouble("Area"));
+                    satellite = new Satellite(rs.getInt("User_ID"), rs.getString("SatelliteName"),rs.getDouble("Mass"),rs.getDouble("Area"), rs.getDouble("Altitude"));
+                    satellite.setSatellite_ID(rs.getInt("Satellite_id"));
+
                 } else {
                     throw new DatabaseError("Satellite not found", "ID: " + id);
                 }
@@ -43,17 +35,17 @@ import java.sql.SQLException;
                 throw new ValidationError("Invalid mass", "Mass must be positive. Given: " + satellite.getMass());
             }
 
-            String sql = "INSERT INTO \"Satellite\" (\"SatelliteName\", \"User_ID\", \"Mass\", \"Altitude\", \"Speed\", \"Area\") " +
-                    "VALUES (?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO \"Satellite\" (\"SatelliteName\", \"User_ID\", \"Mass\", \"Altitude\", \"Area\") " +
+                    "VALUES (?, ?, ?, ?, ?)";
             try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
                  PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setString(1, satellite.getSatelliteName());
-                pstmt.setLong(2, satellite.getUserID());
+                pstmt.setString(1, satellite.getId());
+                pstmt.setInt(2, satellite.getUser_Id());
                 pstmt.setDouble(3, satellite.getMass());
                 pstmt.setDouble(4, satellite.getAltitude());
-                pstmt.setDouble(5, satellite.getSpeed());
                 pstmt.setDouble(6, satellite.getArea());
                 pstmt.executeUpdate();
+                satellite.setSatellite_ID(getSatelliteIdByName(satellite.getId()));
             } catch (SQLException e) {
                 throw new DatabaseError("Failed to insert satellite", e.getMessage());
             }
@@ -81,19 +73,19 @@ import java.sql.SQLException;
             }
 
             String sql = "UPDATE \"Satellite\" SET \"SatelliteName\" = ?, \"User_ID\" = ?, \"Mass\" = ?, \"Altitude\" = ?, " +
-                    "\"Speed\" = ?, \"Area\" = ? WHERE \"Satellite_ID\" = ?";
+                    "\"Area\" = ? WHERE \"Satellite_ID\" = ?";
             try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
                  PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setString(1, satellite.getSatelliteName());
-                pstmt.setLong(2, satellite.getUserID());
+                pstmt.setString(1, satellite.getId());
+                pstmt.setLong(2, satellite.getUser_Id());
                 pstmt.setDouble(3, satellite.getMass());
                 pstmt.setDouble(4, satellite.getAltitude());
                 pstmt.setDouble(5, satellite.getSpeed());
                 pstmt.setDouble(6, satellite.getArea());
-                pstmt.setInt(7, satellite.getSatelliteID());
+                pstmt.setInt(7, satellite.getSatellite_ID());
                 int rowsAffected = pstmt.executeUpdate();
                 if (rowsAffected == 0) {
-                    throw new DatabaseError("Satellite update failed", "No satellite found with ID: " + satellite.getSatelliteID());
+                    throw new DatabaseError("Satellite update failed", "No satellite found with ID: " + satellite.getSatellite_ID());
                 }
             } catch (SQLException e) {
                 throw new DatabaseError("Database connection failed", e.getMessage());
