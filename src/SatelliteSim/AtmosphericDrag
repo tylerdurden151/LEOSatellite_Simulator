@@ -9,8 +9,8 @@ public class AtmosphericDrag {
     private static final double[] REF_DENSITIES = {5.0e-8, 2.0e-9, 1.0e-10, 1.0e-11};   // kg/m^3 (average solar activity)
     private static final double[] SCALE_HEIGHTS = {40_000, 50_000, 55_000, 60_000};      // m
 
-    // Solar activity multiplier (1.0 = average, 0.5 = low, 2.0 = high)
-    private static final double SOLAR_ACTIVITY_FACTOR = 1.0;
+    // POSSIBLE IDEA FOR MITCH: Solar activity multiplier (1.0 = average, 0.5 = low, 2.0 = high)
+    //private static final double SOLAR_ACTIVITY_FACTOR = 1.0;
 
     // Calculate atmospheric density based on altitude
     public static double calculateDensity(double altitude) {
@@ -24,14 +24,14 @@ public class AtmosphericDrag {
                 double rho0 = REF_DENSITIES[i];
                 double h0 = REF_ALTITUDES[i];
                 double H = SCALE_HEIGHTS[i];
-                return rho0 * Math.exp(-(altitude - h0) / H) * SOLAR_ACTIVITY_FACTOR;
+                return rho0 * Math.exp(-(altitude - h0) / H); // * SOLAR_ACTIVITY_FACTOR;
             }
         }
         // For altitudes >= 400 km, use the last band
         double rho0 = REF_DENSITIES[REF_DENSITIES.length - 1];
         double h0 = REF_ALTITUDES[REF_ALTITUDES.length - 1];
         double H = SCALE_HEIGHTS[SCALE_HEIGHTS.length - 1];
-        return rho0 * Math.exp(-(altitude - h0) / H) * SOLAR_ACTIVITY_FACTOR;
+        return rho0 * Math.exp(-(altitude - h0) / H); //* SOLAR_ACTIVITY_FACTOR;
     }
 
     // Calculate orbital decay in meters per orbit
