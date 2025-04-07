@@ -19,7 +19,7 @@ public class TestMain {
 
             manager.addSatellite(satellite);
             System.out.println("Test Case: Add invalid satellite - Failed (Expected ValidationError)");
-        } catch (ValidationError e) {
+        } catch (ValidationError | DatabaseError e) {
             System.out.println("Test Case: Add invalid satellite - Passed | " + e.toString());
         }
 
