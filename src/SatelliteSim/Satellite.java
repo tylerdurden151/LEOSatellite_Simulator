@@ -6,6 +6,8 @@ import javafx.scene.shape.Box;
 
 
 public class Satellite {
+    private int satellite_ID = 0;
+    private final int user_ID;
     private final String id;
     private final Box body;
     private final double mass;      // in kg
@@ -17,10 +19,11 @@ public class Satellite {
     private final double orbitSpeed = 0.5;
     // private final Sphere sphere = Earth.getSphere();
 
-    public Satellite(String id, double mass, double area, double altitude) {
+    public Satellite(int user_ID, String id, double mass, double area, double altitude) {
         if (mass <= 0 || area <= 0 || altitude < 0) {
             throw new IllegalArgumentException("Mass and area must be positive, altitude and speed non-negative.");
         }
+        this.user_ID = user_ID;
         this.id = id;
         this.mass = mass;
         this.altitude = altitude;
@@ -30,6 +33,7 @@ public class Satellite {
         // Build visual representation
         this.body = createVisual();
     }
+
 
     private Box createVisual() {
         // Use area to estimate width/height visually (simplified to square face)
@@ -44,6 +48,16 @@ public class Satellite {
     }
 
     // Accessors
+    public void setSatellite_ID(int satellite_ID)  {
+        this.satellite_ID=satellite_ID;
+    }
+    public int getSatellite_ID() {
+        return satellite_ID;
+    }
+    public int getUser_Id() {
+        return user_ID;
+    }
+
     public String getId() {
         return id;
     }

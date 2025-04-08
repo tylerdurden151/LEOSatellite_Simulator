@@ -80,7 +80,22 @@ public class UserInterface {
         // Buttons
         Button calcButton = new Button("Calculate");
         calcButton.setOnAction(e -> {
-            showAnimation(idTextField, massTextField, areaTextField, altitudeTextField, stage);
+                    try {
+
+                        showAnimation(idTextField, massTextField, areaTextField, altitudeTextField, stage);
+                    } catch (DatabaseError dbError) {
+                        // Handle the custom DatabaseError here
+                        System.err.println("Database error occurred: " + dbError.getMessage());
+                        // Optionally show an alert to the user
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Database Error");
+                        alert.setHeaderText("An error occurred while accessing the database.");
+                        alert.setContentText(dbError.getMessage());
+                        alert.showAndWait();
+                    } catch (Exception ex) {
+                        // Catch other unexpected exceptions
+                        System.err.println("An unexpected error occurred: " + ex.getMessage());
+                    }
 
         });
 
@@ -139,7 +154,7 @@ public class UserInterface {
     }
 */
 
-    private void showAnimation(TextField idField, TextField massField, TextField areaField, TextField altitudeField, Stage stage) {
+    private void showAnimation(TextField idField, TextField massField, TextField areaField, TextField altitudeField, Stage stage) throws DatabaseError, ValidationError {
 
         // addNewSatellite(idField, massField, areaField, altitudeField);
 
@@ -153,8 +168,11 @@ public class UserInterface {
         double altitude = Double.parseDouble(altitudeField.getText());
         //int speed = Integer.parseInt(speedField.getText());
         //Satellite satellite = new Satellite(id, mass, area, altitude, speed);
+        // instantiate a database manager
+        SatelliteDataBaseManager dbManager = new SatelliteDataBaseManager();
 
-        Satellite satellite = new Satellite(id, mass, area, altitude);
+        Satellite satellite = new Satellite(1,id, mass, area, altitude);
+        dbManager.addSatellite(satellite);
         this.satellite = satellite;
 
         // Step 3: Perform calculations
@@ -306,7 +324,23 @@ public class UserInterface {
 
         Button addSatellite = new Button("Add Satellite");
         addSatellite.setOnAction(e -> {
-            showAnimation(idTextField, massTextField, areaTextField, altitudeTextField, (Stage) addSatellite.getScene().getWindow());
+                    try {
+
+                        showAnimation(idTextField, massTextField, areaTextField, altitudeTextField, (Stage) addSatellite.getScene().getWindow());
+                    } catch (DatabaseError dbError) {
+                        // Handle the custom DatabaseError here
+                        System.err.println("Database error occurred: " + dbError.getMessage());
+                        // Optionally show an alert to the user
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Database Error");
+                        alert.setHeaderText("An error occurred while accessing the database.");
+                        alert.setContentText(dbError.getMessage());
+                        alert.showAndWait();
+                    } catch (Exception ex) {
+                        // Catch other unexpected exceptions
+                        System.err.println("An unexpected error occurred: " + ex.getMessage());
+                    }
+
         });
 
         //  addNewSatellite(idTextField, massTextField, areaTextField, altitudeTextField);
