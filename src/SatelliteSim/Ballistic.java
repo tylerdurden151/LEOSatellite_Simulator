@@ -1,3 +1,11 @@
+/* Project name: CMSC495
+ * File name: Ballistic.java
+ * Authors: Timothy Eckart, Tyler Blumenshine, Ricardo Gordon, Mitch Mclaughlin, Siddharth Patel
+ * Date: 8 Apr 2025
+ * Purpose: Calculates the ballistic coefficient used in drag and re-entry computations.
+ */
+
+
 package SatelliteSim    ;
 
 public class Ballistic {

@@ -1,3 +1,11 @@
+/* Project name: CMSC495
+ * File name: Simulation.java
+ * Authors: Timothy Eckart, Tyler Blumenshine, Ricardo Gordon, Mitch Mclaughlin, Siddharth Patel
+ * Date: 8 Apr 2025
+ * Purpose: Controls the 3D visualization and animation of the satellite orbiting Earth in the simulation.
+ */
+
+
 package SatelliteSim;
 
 import javafx.animation.AnimationTimer;
@@ -25,35 +33,7 @@ public class Simulation {
    public Simulation(Satellite satellite) {
        this.satellite = satellite;
    }
-/*    public void start(Stage primaryStage) {
-        Camera camera = new PerspectiveCamera(true);
-        camera.setNearClip(1);
-        camera.setFarClip(10000);
-        camera.translateZProperty().set(-1000);
 
-        Group world = new Group();
-        world.getChildren().add(sphere);
-
-       // earth = new Earth(satellite);
-        world.getChildren().add(satellite.getBody());
-
-        Group root = new Group();
-        root.getChildren().add(world);
-        root.getChildren().add(Earth.getImageView());
-
-        Scene scene = new Scene(root, WIDTH, HEIGHT, true);
-        scene.setFill(Color.SILVER);
-        scene.setCamera(camera);
-
-        initMouseControl(world, scene, primaryStage);
-
-        primaryStage.setTitle("SatelliteSimulator");
-        primaryStage.setScene(scene);
-        primaryStage.show();
-
-        prepareAnimation();
-    }
-   */
     public SubScene getSubScene() {
         world = new Group();
         AmbientLight ambient = new AmbientLight(Color.WHITE);

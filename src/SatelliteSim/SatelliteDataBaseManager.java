@@ -1,3 +1,11 @@
+/* Project name: CMSC495
+ * File name: SatelliteDataBaseManager.java
+ * Authors: Timothy Eckart, Tyler Blumenshine, Ricardo Gordon, Mitch Mclaughlin, Siddharth Patel
+ * Date: 8 Apr 2025
+ * Purpose: Manages database operations such as inserting, retrieving, and deleting satellite records.
+ */
+
+
 package SatelliteSim;
 
 import java.sql.*;

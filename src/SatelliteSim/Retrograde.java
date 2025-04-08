@@ -1,3 +1,11 @@
+/* Project name: CMSC495
+ * File name: Retrograde.java
+ * Authors: Timothy Eckart, Tyler Blumenshine, Ricardo Gordon, Mitch Mclaughlin, Siddharth Patel
+ * Date: 8 Apr 2025
+ * Purpose: Computes time to satellite re-entry and formats the timeframe for display.
+ */
+
+
 package SatelliteSim;
 
 public class Retrograde {

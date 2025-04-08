@@ -1,3 +1,11 @@
+/* Project name: CMSC495
+ * File name: DatabaseError.java
+ * Authors: Timothy Eckart, Tyler Blumenshine, Ricardo Gordon, Mitch Mclaughlin, Siddharth Patel
+ * Date: 7 Apr 2025
+ * Purpose: Custom error class for database-specific exceptions.
+ */
+
+
 package SatelliteSim;
 
 public class DatabaseError extends SatelliteError{

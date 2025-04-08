@@ -1,3 +1,12 @@
+/* Project name: CMSC495
+ * File name: Earth.java
+ * Authors: Timothy Eckart, Tyler Blumenshine, Ricardo Gordon, Mitch Mclaughlin, Siddharth Patel
+ * Date: 7 Apr 2025
+ * sampled source: https://github.com/afsalashyana/JavaFX-3D
+ * Purpose: Constructs the 3D visual representation of Earth and background for the simulation.
+ */
+
+
 package SatelliteSim;
 
 import javafx.scene.image.Image;
@@ -11,18 +20,13 @@ import javafx.scene.transform.Translate;
 public class Earth {
     private static final Sphere sphere = prepareEarth();
     private static final ImageView imageView = prepareImageView();
-    //private final Circle orbitCircle;
 
-    // Constructor takes a Satellite object to get altitude
- /*   public Earth(Satellite satellite) {
-        this.sphere = prepareEarth();
-        this.imageView = prepareImageView();
-        this.orbitCircle = prepareOrbitCircle(satellite);
-    }
-*/
+
+    //Makes sphere from image resources
     private static Sphere prepareEarth() {
         Sphere sphere = new Sphere(150);
         PhongMaterial earthMaterial = new PhongMaterial();
+        //Modified our original source to handle error coding
         try {
             earthMaterial.setDiffuseMap(new Image(Earth.class.getResourceAsStream("/resources/earth/earth-d.jpg")));
             earthMaterial.setSelfIlluminationMap(new Image(Earth.class.getResourceAsStream("/resources/earth/earth-l.jpg")));
@@ -38,33 +42,11 @@ public class Earth {
         return sphere;
     }
 
- /*   private Circle prepareOrbitCircle(Satellite satellite) {
-        // Scale altitude: e.g., 400 km real -> 50 units visual
-        double realAltitude = satellite.getAltitude(); // in meters
-        double heightAboveSurface = (realAltitude / 400_000) * 50; // Proportional scaling
-        double orbitRadius = sphere.getRadius() + heightAboveSurface;
-
-        // Create a 2D circle
-        Circle circle = new Circle(orbitRadius);
-        circle.setFill(null); // Transparent fill
-        circle.setStroke(Color.RED); // Red outline
-        circle.setStrokeWidth(2.0); // Thickness of the line
-
-        // Rotate 90 degrees around X-axis to align with equator
-        circle.getTransforms().add(new Rotate(90, Rotate.X_AXIS));
-
-        // Center it with the sphere
-        circle.setTranslateX(0);
-        circle.setTranslateY(0);
-        circle.setTranslateZ(0);
-
-        return circle;
-    }
-*/
+//Method makes Galaxy background
     private static ImageView prepareImageView() {
         ImageView imageView = new ImageView();
+        //Modified our original source to handle error coding
         try {
-            // Use file: protocol for absolute paths
             String galaxyPath = "/resources/galaxy/galaxy.jpg";
             Image image = new Image(galaxyPath);
             imageView.setImage(image);
@@ -76,15 +58,12 @@ public class Earth {
         return imageView;
     }
 
-
+    //getter for earth
     public static Sphere getSphere() {
         return sphere;
     }
 
-  /*  public Circle getOrbitCircle() {
-        return orbitCircle;
-    }
-*/
+    //getter for Galaxy
     public static ImageView getImageView() {
         return imageView;
     }

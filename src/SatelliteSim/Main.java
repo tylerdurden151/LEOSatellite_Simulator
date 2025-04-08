@@ -1,13 +1,11 @@
 /* Project name: CMSC495
  * File name: Main.java
- * Author: Timothy Eckart
- * source: afsalashyana
+ * Authors: Timothy Eckart, Tyler Blumenshine, Ricardo Gordon, Mitch Mclaughlin, Siddharth Patel
  * Date: 7 Apr 2025
- * Purpose:
- *
+ * Purpose: Main function to launch the JavaFX application and initialize the user interface.
  */
 
-//last edit done by Tim E 14:25 7 Apr 2025
+
 
 package SatelliteSim;
 	
