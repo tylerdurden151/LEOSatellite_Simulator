@@ -1,3 +1,11 @@
+/* Project name: CMSC495
+ * File name: Satellite.java
+ * Authors: Timothy Eckart, Tyler Blumenshine, Ricardo Gordon, Mitch Mclaughlin, Siddharth Patel
+ * Date: 8 Apr 2025
+ * Purpose: Represents a satellite's physical, visual, and orbital properties.
+ */
+
+
 package SatelliteSim;
 
 import javafx.scene.image.Image;
@@ -34,7 +42,7 @@ public class Satellite {
         this.body = createVisual();
     }
 
-
+//Make Satellite Image
     private Box createVisual() {
         // Use area to estimate width/height visually (simplified to square face)
         double size = Math.sqrt(area) * 5; // Scaling factor for visibility
@@ -94,6 +102,7 @@ public class Satellite {
         return body;
     }
 
+    //Passes parameters to modify the satellites size and distance visuals
     public void updatePosition() {
         angle += orbitSpeed;
         double radians = Math.toRadians(angle);
@@ -103,29 +112,5 @@ public class Satellite {
         body.setTranslateZ(z);
     }
 }
-/*
-    public class Satellite {
-        private double mass;          // kg
-        private double altitude;      // m (height above Earth's surface)
-        private double speed;         // m/s (initial speed, optional)
-        private double area;          // m^2 (directional/cross-sectional area)
 
-        public Satellite(double mass, double altitude, double speed, double area) {
-            if (mass <= 0 || altitude < 0 || speed < 0 || area <= 0) {
-                throw new IllegalArgumentException("Mass and area must be positive, altitude and speed non-negative.");
-            }
-            this.mass = mass;
-            this.altitude = altitude;
-            this.speed = speed;
-            this.area = area;
-        }
-
-        // Getters
-        public double getMass() { return mass; }
-        public double getAltitude() { return altitude; }
-        public double getSpeed() { return speed; }
-        public double getArea() { return area; }
-    }
-
- */
 

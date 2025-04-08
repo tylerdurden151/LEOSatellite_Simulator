@@ -1,3 +1,11 @@
+/* Project name: CMSC495
+ * File name: UserInterface.java
+ * Authors: Timothy Eckart, Tyler Blumenshine, Ricardo Gordon, Mitch Mclaughlin, Siddharth Patel
+ * Date: 8 Apr 2025
+ * Purpose: Builds the JavaFX GUI for input, output display, and control of the simulation and satellite data.
+ */
+
+
 package SatelliteSim;
 
 
@@ -23,7 +31,7 @@ public class UserInterface {
     String testIntString = "10";
     String testString = "string";
 
-
+//GUI UI to take user inputs
     public void build(Stage stage) {
         // Labels
         Label idLabel = new Label("Satellite Id");
@@ -117,43 +125,7 @@ public class UserInterface {
 
     }
 
-    /*
-    private void handleCalculation(TextField idField, TextField massField, TextField areaField, TextField altitudeField, Stage stage) {
-        try {
-            String id = idField.getText();
-            double mass = Double.parseDouble(massField.getText());
-            double area = Double.parseDouble(areaField.getText());
-            double altitude = Double.parseDouble(altitudeField.getText());
-            //double speed = Double.parseDouble(speedField.getText());
-            Satellite satellite = new Satellite(id, mass, area, altitude);
-            this.satellite = satellite;
-            //Simulation simulation = new Simulation(satellite);
-            //simulation.start(stage);
-            double period = OrbitalPeriod.calculatePeriod(satellite);
-            double ballistic = Ballistic.calculateBallisticCoefficient(satellite);
-            //double reentryTime = Retrograde.calculateTimeToReentry(satellite);
-
-            // NEW: Reentry time using Retrograde instance
-            Retrograde retro = new Retrograde(satellite);
-            double reentrySeconds = retro.calculateTimeToReentry();
-            String reentryTimeFormatted = retro.getReentryTimeframe();
-
-            //double totalOrbits = NumOrbitsLifecycle.calculateNumberOfOrbits(satellite);
-            NumOrbitsLifecycle orbitsCalc = new NumOrbitsLifecycle(satellite);
-            double totalOrbits = orbitsCalc.calculateNumberOfOrbits();
-
-
-            //SubScene simScene = simulation.getSubScene();
-            // simScene.setFill(Color.BLACK);
-            //VBox simLayout = new VBox(simScene);
-
-
-        } catch (NumberFormatException _) {
-
-        }
-    }
-*/
-
+// Visual method to pass inputs into class calculation fuctions and generates Sim & UI Tab.
     private void showAnimation(TextField idField, TextField massField, TextField areaField, TextField altitudeField, Stage stage) throws DatabaseError, ValidationError {
 
         // addNewSatellite(idField, massField, areaField, altitudeField);
@@ -217,6 +189,7 @@ public class UserInterface {
 
 }
 
+//Phase II
 /*
     public void addNewSatellite(TextField idField, TextField massField, TextField areaField, TextField altitudeField) {
         String id = idField.getText();
@@ -246,6 +219,7 @@ public class UserInterface {
 
     }
 */
+    //Method to display user input results on UI Tab
     public void showSatelliteData(Satellite satellite,
                                          double orbitalPeriod,
                                          double ballistic,
@@ -353,9 +327,5 @@ public class UserInterface {
 
         return inputBox;
     }
-/*
-    private String formatString(String id,int mass,int area, int altitude){
-        return String.format("ID: %s, Mass: %d kg, Area: %d m², Altitude: %d m", id, mass, area, altitude);
-    }
-*/
+
 }

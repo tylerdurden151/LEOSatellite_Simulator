@@ -1,3 +1,10 @@
+/* Project name: CMSC495
+ * File name: AtmosphericDrag.java
+ * Authors: Timothy Eckart, Tyler Blumenshine, Ricardo Gordon, Mitch Mclaughlin, Siddharth Patel
+ * Date: 7 Apr 2025
+ * Purpose: Calculates atmospheric density and orbital decay based on altitude and satellite properties.
+ */
+
 package SatelliteSim;
 
 
