@@ -18,7 +18,7 @@ public class UserInterface {
     private static final double HEIGHT = 1000;
     private Satellite satellite;
     private ObservableList<VBox> satelliteDataList = FXCollections.observableArrayList();
-
+    private enum    VType {INT,DOUBLE};
     // For Testing purposes variables
     String testIntString = "10";
     String testString = "string";
@@ -36,18 +36,21 @@ public class UserInterface {
         TextField idTextField = new TextField(testString);
         idTextField.setPromptText("Satellite Id");
 
+
         TextField massTextField = new TextField(testIntString);
         massTextField.setPromptText("mass in Kg");
+        validateText(massTextField, VType.DOUBLE);
 
         TextField areaTextField = new TextField(testIntString);
         areaTextField.setPromptText("area in square Meters");
-
+        validateText(areaTextField, VType.DOUBLE);
         // Phase II
         // TextField speedField = new TextField();
         //speedField.setPromptText("Speed (m/s)");
 
         TextField altitudeTextField = new TextField(testIntString);
         altitudeTextField.setPromptText("altitude in meters");
+        validateText(altitudeTextField , VType.DOUBLE);
 
 
         // HBoxes
@@ -296,14 +299,18 @@ public class UserInterface {
         TextField idTextField = new TextField(testString);
         idTextField.setPromptText("Satellite Id");
 
+
         TextField massTextField = new TextField(testIntString);
         massTextField.setPromptText("mass in Kg");
+        validateText(massTextField, VType.DOUBLE);
 
         TextField areaTextField = new TextField(testIntString);
         areaTextField.setPromptText("area in square Meters");
+        validateText(areaTextField, VType.DOUBLE);
 
         TextField altitudeTextField = new TextField(testIntString);
         altitudeTextField.setPromptText("altitude in meters");
+        validateText(altitudeTextField, VType.DOUBLE);
 
         // HBoxes
         HBox idBox = new HBox(10);
@@ -352,6 +359,32 @@ public class UserInterface {
 
 
         return inputBox;
+    }
+    private static void validateText(TextField txtValidate, VType vType){
+
+        switch (vType){
+            case INT:
+                txtValidate.textProperty().addListener((observable,oldValue, newValue) ->{
+                    // validate data  must be int or double
+                    if(!newValue.matches("\\d*")){
+                        txtValidate.setText(newValue.replaceAll("[^\\d]",""));
+                    }
+
+                });
+                break;
+            case DOUBLE:
+                txtValidate.textProperty().addListener((observable,oldValue, newValue) ->{
+                    // validate data  must be int or double
+                    if(!newValue.matches("\\d*(\\.\\d*)?")){
+                        txtValidate.setText(newValue.replaceAll("[^\\d.]",""));
+                    }
+
+                });
+                break;
+
+
+        }
+
     }
 /*
     private String formatString(String id,int mass,int area, int altitude){
