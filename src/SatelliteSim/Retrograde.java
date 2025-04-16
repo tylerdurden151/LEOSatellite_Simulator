@@ -1,12 +1,4 @@
-/* Project name: CMSC495
- * File name: Retrograde.java
- * Authors: Timothy Eckart, Tyler Blumenshine, Ricardo Gordon, Mitch Mclaughlin, Siddharth Patel
- * Date: 8 Apr 2025
- * Purpose: Computes time to satellite re-entry and formats the timeframe for display.
- */
-
-
-package SatelliteSim;
+package application;
 
 public class Retrograde {
     private static final double REENTRY_ALTITUDE = 100_000; // 100 km
@@ -18,11 +10,12 @@ public class Retrograde {
     
     //calculates re-entry in seconds
     public double calculateTimeToReentry() {
-        double currentAltitude = satellite.getAltitude();
+    	double currentAltitude = satellite.getAltitude();
         if (currentAltitude <= REENTRY_ALTITUDE) {
             return 0;
         }
-        double decayPerOrbit = AtmosphericDrag.calculateDecayPerOrbit(satellite);
+        
+        double decayPerOrbit =  AtmosphericDrag.calculateDecayPerOrbit(satellite);
         double period = OrbitalPeriod.calculatePeriod(satellite);
         double orbitsToReentry = (currentAltitude - REENTRY_ALTITUDE) / decayPerOrbit;
         return orbitsToReentry * period;
@@ -38,20 +31,10 @@ public class Retrograde {
         int days = (int) (remainingDays - months * 30.4375);
         return String.format("%d years, %d months, %d days", wholeYears, months, days);
     }
-
-    /*
-    public static double calculateTimeToReentry(Satellite satellite) {
-    return new Retrograde(satellite).calculateTimeToReentry();
-}
-*/
-
-
-    /*
-    //function test for tyler B--------------------------------------
+    //function test for Mitch M--------------------------------------
     public static void main(String[] args) {
-        Satellite testSat = new Satellite(500, 400_000, 0, 4);
-        System.out.println();
+        Satellite testSat = new Satellite(1, "Neptune", 500, 2, 400_000);
+        Retrograde retro = new Retrograde(testSat);
+        System.out.println("Reentry Timeframe: " + retro.getReentryTimeframe());
     }
-
-     */
 }
