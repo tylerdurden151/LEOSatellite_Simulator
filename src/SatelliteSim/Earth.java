@@ -1,18 +1,10 @@
-/* Project name: CMSC495
- * File name: Earth.java
- * Authors: Timothy Eckart, Tyler Blumenshine, Ricardo Gordon, Mitch Mclaughlin, Siddharth Patel
- * Date: 7 Apr 2025
- * sampled source: https://github.com/afsalashyana/JavaFX-3D
- * Purpose: Constructs the 3D visual representation of Earth and background for the simulation.
- */
-
-
-package SatelliteSim;
+package application;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
+import javafx.scene.shape.CullFace;
 import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
@@ -20,18 +12,21 @@ import javafx.scene.transform.Translate;
 public class Earth {
     private static final Sphere sphere = prepareEarth();
     private static final ImageView imageView = prepareImageView();
+    //private final Circle orbitCircle;
 
-
-    //Makes sphere from image resources
+    // Constructor takes a Satellite object to get altitude
+ /*   public Earth(Satellite satellite) {
+        this.sphere = prepareEarth();
+        this.imageView = prepareImageView();
+        this.orbitCircle = prepareOrbitCircle(satellite);
+    }
+*/
     private static Sphere prepareEarth() {
-        Sphere sphere = new Sphere(150);
+        Sphere sphere = new Sphere(200);
         PhongMaterial earthMaterial = new PhongMaterial();
-        //Modified our original source to handle error coding
         try {
-            earthMaterial.setDiffuseMap(new Image(Earth.class.getResourceAsStream("/resources/earth/earth-d.jpg")));
-            earthMaterial.setSelfIlluminationMap(new Image(Earth.class.getResourceAsStream("/resources/earth/earth-l.jpg")));
-            earthMaterial.setSpecularMap(new Image(Earth.class.getResourceAsStream("/resources/earth/earth-s.jpg")));
-            earthMaterial.setBumpMap(new Image(Earth.class.getResourceAsStream("/resources/earth/earth-n.jpg")));
+            String earthPath = "file:C:/Computer Science Major/ProjectOrionV2/src/Images/earth-d.jpg";
+            earthMaterial.setDiffuseMap(new Image(earthPath));
         } catch (Exception e) {
             System.err.println("Error loading Earth texture: " + e.getMessage());
             earthMaterial.setDiffuseColor(Color.BLUE); // Fallback color
@@ -42,12 +37,34 @@ public class Earth {
         return sphere;
     }
 
-//Method makes Galaxy background
+ /*   private Circle prepareOrbitCircle(Satellite satellite) {
+        // Scale altitude: e.g., 400 km real -> 50 units visual
+        double realAltitude = satellite.getAltitude(); // in meters
+        double heightAboveSurface = (realAltitude / 400_000) * 50; // Proportional scaling
+        double orbitRadius = sphere.getRadius() + heightAboveSurface;
+
+        // Create a 2D circle
+        Circle circle = new Circle(orbitRadius);
+        circle.setFill(null); // Transparent fill
+        circle.setStroke(Color.RED); // Red outline
+        circle.setStrokeWidth(2.0); // Thickness of the line
+
+        // Rotate 90 degrees around X-axis to align with equator
+        circle.getTransforms().add(new Rotate(90, Rotate.X_AXIS));
+
+        // Center it with the sphere
+        circle.setTranslateX(0);
+        circle.setTranslateY(0);
+        circle.setTranslateZ(0);
+
+        return circle;
+    }
+*/
     private static ImageView prepareImageView() {
         ImageView imageView = new ImageView();
-        //Modified our original source to handle error coding
         try {
-            String galaxyPath = "/resources/galaxy/galaxy.jpg";
+            // Use file: protocol for absolute paths
+            String galaxyPath = "file:C:/Computer Science Major/ProjectOrionV2/src/Images/galaxy.jpg";
             Image image = new Image(galaxyPath);
             imageView.setImage(image);
             imageView.setPreserveRatio(true);
@@ -58,12 +75,15 @@ public class Earth {
         return imageView;
     }
 
-    //getter for earth
+
     public static Sphere getSphere() {
         return sphere;
     }
 
-    //getter for Galaxy
+  /*  public Circle getOrbitCircle() {
+        return orbitCircle;
+    }
+*/
     public static ImageView getImageView() {
         return imageView;
     }
