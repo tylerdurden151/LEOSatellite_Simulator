@@ -7,14 +7,15 @@ public class Retrograde {
     public Retrograde(Satellite satellite) {
         this.satellite = satellite;
     }
-    
+
     //calculates re-entry in seconds
     public double calculateTimeToReentry() {
         double currentAltitude = satellite.getAltitude();
         if (currentAltitude <= REENTRY_ALTITUDE) {
             return 0;
         }
-        double decayPerOrbit = AtmosphericDrag.calculateDecayPerOrbit(satellite);
+
+        double decayPerOrbit =  AtmosphericDrag.calculateDecayPerOrbit(satellite);
         double period = OrbitalPeriod.calculatePeriod(satellite);
         double orbitsToReentry = (currentAltitude - REENTRY_ALTITUDE) / decayPerOrbit;
         return orbitsToReentry * period;
@@ -30,20 +31,10 @@ public class Retrograde {
         int days = (int) (remainingDays - months * 30.4375);
         return String.format("%d years, %d months, %d days", wholeYears, months, days);
     }
-
-    /*
-    public static double calculateTimeToReentry(Satellite satellite) {
-    return new Retrograde(satellite).calculateTimeToReentry();
-}
-*/
-
-
-    /*
-    //function test for tyler B--------------------------------------
+    //function test for Mitch M--------------------------------------
     public static void main(String[] args) {
-        Satellite testSat = new Satellite(500, 400_000, 0, 4);
-        System.out.println();
+        Satellite testSat = new Satellite(1, "Neptune", 500, 2, 400_000);
+        Retrograde retro = new Retrograde(testSat);
+        System.out.println("Reentry Timeframe: " + retro.getReentryTimeframe());
     }
-
-     */
 }
