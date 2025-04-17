@@ -1,4 +1,4 @@
-package application;
+package SatelliteSim;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -25,7 +25,7 @@ public class Earth {
         Sphere sphere = new Sphere(200);
         PhongMaterial earthMaterial = new PhongMaterial();
         try {
-            String earthPath = "file:C:/Computer Science Major/ProjectOrionV2/src/Images/earth-d.jpg";
+            String earthPath = "/resources/earth/earth-d.jpg";
             earthMaterial.setDiffuseMap(new Image(earthPath));
         } catch (Exception e) {
             System.err.println("Error loading Earth texture: " + e.getMessage());
@@ -64,7 +64,7 @@ public class Earth {
         ImageView imageView = new ImageView();
         try {
             // Use file: protocol for absolute paths
-            String galaxyPath = "file:C:/Computer Science Major/ProjectOrionV2/src/Images/galaxy.jpg";
+            String galaxyPath = "/resources/galaxy/galaxy.jpg";
             Image image = new Image(galaxyPath);
             imageView.setImage(image);
             imageView.setPreserveRatio(true);
