@@ -2,12 +2,12 @@
  * File name: Main.java
  * Author: Timothy Eckart
  * source: afsalashyana
- * Date: 7 Apr 2025
+ * Date: 16 Apr 2025
  * Purpose:
  *
  */
 
-//last edit done by Tim E 14:25 7 Apr 2025
+//last edit done by Tim E 08:12 16 Apr 2025
 
 package SatelliteSim;
 	
