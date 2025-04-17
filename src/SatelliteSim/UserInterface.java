@@ -19,6 +19,9 @@ public class UserInterface {
     private Satellite satellite;
     private ObservableList<VBox> satelliteDataList = FXCollections.observableArrayList();
 
+    private static final int MAX_ALTITUDE = 50000;
+
+
     // For Testing purposes variables
     String testIntString = "10";
     String testString = "string";
@@ -163,9 +166,32 @@ public class UserInterface {
         //Simulation Tab_________________________________________________________________
         //Create Satellite from user inputs
         String id = idField.getText();
-        double mass = Double.parseDouble(massField.getText());
-        double area = Double.parseDouble(areaField.getText());
-        double altitude = Double.parseDouble(altitudeField.getText());
+        if (id.isEmpty()) {
+            showAlert("Input Error", "Satellite Id is required.", "Please enter a valid Satellite Id.");
+            return;
+        }
+
+        double mass, area, altitude;
+        try {
+            mass = Double.parseDouble(massField.getText());
+            area = Double.parseDouble(areaField.getText());
+            altitude = Double.parseDouble(altitudeField.getText());
+
+        } catch (NumberFormatException nfe) {
+            showAlert("Input Error", "Invalid numeric value.", "Mass, Area, and Altitude must be numeric.");
+            return;
+
+        }
+
+        if (mass <= 0 || area <= 0  || altitude <= 0) {
+            showAlert("Input Error", "Invalid numeric value.", "Mass, Area, and Altitude must be greater than 0.");
+            return;
+        }
+
+        if (altitude > MAX_ALTITUDE) {
+            showAlert("Input Error", "Altitude too high.", "Altitude must be 5000 or less.");
+            return;
+        }
         //int speed = Integer.parseInt(speedField.getText());
         //Satellite satellite = new Satellite(id, mass, area, altitude, speed);
         // instantiate a database manager
@@ -352,6 +378,27 @@ public class UserInterface {
 
 
         return inputBox;
+    }
+
+    private void showAlert(String title, String header, String content) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+
+    // Handles Database errors
+
+    private void showDBError (DatabaseError dbError) {
+        // Handle the custom DatabaseError here
+        System.err.println("Database error occurred: " + dbError.getMessage());
+        // Optionally show an alert to the user
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Database Error");
+        alert.setHeaderText("An error occurred while accessing the database.");
+        alert.setContentText(dbError.getMessage());
+        alert.showAndWait();
     }
 /*
     private String formatString(String id,int mass,int area, int altitude){
