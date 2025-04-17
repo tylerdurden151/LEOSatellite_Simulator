@@ -4,6 +4,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
+import javafx.scene.shape.CullFace;
 import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
@@ -21,13 +22,11 @@ public class Earth {
     }
 */
     private static Sphere prepareEarth() {
-        Sphere sphere = new Sphere(150);
+        Sphere sphere = new Sphere(200);
         PhongMaterial earthMaterial = new PhongMaterial();
         try {
-            earthMaterial.setDiffuseMap(new Image(Earth.class.getResourceAsStream("/resources/earth/earth-d.jpg")));
-            earthMaterial.setSelfIlluminationMap(new Image(Earth.class.getResourceAsStream("/resources/earth/earth-l.jpg")));
-            earthMaterial.setSpecularMap(new Image(Earth.class.getResourceAsStream("/resources/earth/earth-s.jpg")));
-            earthMaterial.setBumpMap(new Image(Earth.class.getResourceAsStream("/resources/earth/earth-n.jpg")));
+            String earthPath = "/resources/earth/earth-d.jpg";
+            earthMaterial.setDiffuseMap(new Image(earthPath));
         } catch (Exception e) {
             System.err.println("Error loading Earth texture: " + e.getMessage());
             earthMaterial.setDiffuseColor(Color.BLUE); // Fallback color
@@ -38,29 +37,29 @@ public class Earth {
         return sphere;
     }
 
- /*   private Circle prepareOrbitCircle(Satellite satellite) {
-        // Scale altitude: e.g., 400 km real -> 50 units visual
-        double realAltitude = satellite.getAltitude(); // in meters
-        double heightAboveSurface = (realAltitude / 400_000) * 50; // Proportional scaling
-        double orbitRadius = sphere.getRadius() + heightAboveSurface;
+    /*   private Circle prepareOrbitCircle(Satellite satellite) {
+           // Scale altitude: e.g., 400 km real -> 50 units visual
+           double realAltitude = satellite.getAltitude(); // in meters
+           double heightAboveSurface = (realAltitude / 400_000) * 50; // Proportional scaling
+           double orbitRadius = sphere.getRadius() + heightAboveSurface;
 
-        // Create a 2D circle
-        Circle circle = new Circle(orbitRadius);
-        circle.setFill(null); // Transparent fill
-        circle.setStroke(Color.RED); // Red outline
-        circle.setStrokeWidth(2.0); // Thickness of the line
+           // Create a 2D circle
+           Circle circle = new Circle(orbitRadius);
+           circle.setFill(null); // Transparent fill
+           circle.setStroke(Color.RED); // Red outline
+           circle.setStrokeWidth(2.0); // Thickness of the line
 
-        // Rotate 90 degrees around X-axis to align with equator
-        circle.getTransforms().add(new Rotate(90, Rotate.X_AXIS));
+           // Rotate 90 degrees around X-axis to align with equator
+           circle.getTransforms().add(new Rotate(90, Rotate.X_AXIS));
 
-        // Center it with the sphere
-        circle.setTranslateX(0);
-        circle.setTranslateY(0);
-        circle.setTranslateZ(0);
+           // Center it with the sphere
+           circle.setTranslateX(0);
+           circle.setTranslateY(0);
+           circle.setTranslateZ(0);
 
-        return circle;
-    }
-*/
+           return circle;
+       }
+   */
     private static ImageView prepareImageView() {
         ImageView imageView = new ImageView();
         try {
@@ -81,10 +80,10 @@ public class Earth {
         return sphere;
     }
 
-  /*  public Circle getOrbitCircle() {
-        return orbitCircle;
-    }
-*/
+    /*  public Circle getOrbitCircle() {
+          return orbitCircle;
+      }
+  */
     public static ImageView getImageView() {
         return imageView;
     }
