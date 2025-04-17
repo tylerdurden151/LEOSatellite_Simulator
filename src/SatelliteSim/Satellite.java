@@ -1,9 +1,9 @@
 package SatelliteSim;
 
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
-
 
 public class Satellite {
     private int satellite_ID = 0;
@@ -15,35 +15,52 @@ public class Satellite {
     private final double speed = 0;     // in m/s (optional for now)
     private final double area;
     private double angle = 0;
-    private final double orbitRadius = 250;
+
+    // Hot FIX by Mitch M 4/16./25
+    private final double orbitRadius; // Visual orbit radius in simulation units
     private final double orbitSpeed = 0.5;
+    private static final double EARTH_VISUAL_RADIUS = 200.0; // Matches Sphere radius in Earth.java CHANGE YOUR sphere() object creation to 200 in earth.java plse-M
+    private static final double EARTH_REAL_RADIUS = 6.371e6; // Real Earth radius in meters
+    //OPTIONAL FOR TEAM DISCUSSION
+    //Multiply Earth visual Radius by a scaling number, start with value scaling of 5 and go from there if team decides different?
+    //Right now this is gonna just be left as is to exactly mathematically accurate -Mitch
+    private static final double SCALE_FACTOR = EARTH_VISUAL_RADIUS / EARTH_REAL_RADIUS; // Visual units per meter
     // private final Sphere sphere = Earth.getSphere();
 
     public Satellite(int user_ID, String id, double mass, double area, double altitude) {
         if (mass <= 0 || area <= 0 || altitude < 0) {
-            throw new IllegalArgumentException("Mass and area must be positive, altitude and speed non-negative.");
+            throw new IllegalArgumentException("Mass and area must be positive, altitude non-negative.");
         }
         this.user_ID = user_ID;
         this.id = id;
         this.mass = mass;
         this.altitude = altitude;
-        //this.speed = speed;
         this.area = area;
+
+        // Calculate visual orbit radius: Earth's visual radius + scaled altitude
+        this.orbitRadius = EARTH_VISUAL_RADIUS + (altitude * SCALE_FACTOR);
 
         // Build visual representation
         this.body = createVisual();
     }
 
-
     private Box createVisual() {
         // Use area to estimate width/height visually (simplified to square face)
-        double size = Math.sqrt(area) * 5; // Scaling factor for visibility
+        double size = Math.sqrt(area) * 3; // Scaling factor for visibility TONED down for better visual -Mitch
         Box visual = new Box(size, size, size / 2);
 
         PhongMaterial material = new PhongMaterial();
-        material.setDiffuseMap(new Image(getClass().getResource("/resources/satellite/satellite_texture.png").toExternalForm()));
+        try {
+            // Use relative resource path starting with "/"
+            String texturePath = "/resources/satellite/satellite_texture.png";
+            Image texture = new Image(texturePath);
+            material.setDiffuseMap(texture);
+        } catch (Exception e) {
+            System.err.println("Error loading satellite texture: " + e.getMessage());
+            // Optionally set a default color if the texture fails to load
+            material.setDiffuseColor(javafx.scene.paint.Color.GRAY);
+        }
         visual.setMaterial(material);
-
         return visual;
     }
 
@@ -103,29 +120,3 @@ public class Satellite {
         body.setTranslateZ(z);
     }
 }
-/*
-    public class Satellite {
-        private double mass;          // kg
-        private double altitude;      // m (height above Earth's surface)
-        private double speed;         // m/s (initial speed, optional)
-        private double area;          // m^2 (directional/cross-sectional area)
-
-        public Satellite(double mass, double altitude, double speed, double area) {
-            if (mass <= 0 || altitude < 0 || speed < 0 || area <= 0) {
-                throw new IllegalArgumentException("Mass and area must be positive, altitude and speed non-negative.");
-            }
-            this.mass = mass;
-            this.altitude = altitude;
-            this.speed = speed;
-            this.area = area;
-        }
-
-        // Getters
-        public double getMass() { return mass; }
-        public double getAltitude() { return altitude; }
-        public double getSpeed() { return speed; }
-        public double getArea() { return area; }
-    }
-
- */
-
