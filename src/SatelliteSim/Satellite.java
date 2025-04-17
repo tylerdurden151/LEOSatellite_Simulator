@@ -1,4 +1,4 @@
-package application;
+package SatelliteSim;
 
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
@@ -52,7 +52,7 @@ import javafx.scene.shape.Box;
         PhongMaterial material = new PhongMaterial();
         try {
             // Use relative resource path starting with "/"
-            String texturePath = "file:C:/Computer Science Major/ProjectOrionV2/src/Images/satellite_texture.jpg";
+            String texturePath = "/resources/satellite/satellite_texture.png";
             Image texture = new Image(texturePath);
             material.setDiffuseMap(texture);
         } catch (Exception e) {
