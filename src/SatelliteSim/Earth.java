@@ -4,6 +4,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
+import javafx.scene.shape.CullFace;
 import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
@@ -21,13 +22,11 @@ public class Earth {
     }
 */
     private static Sphere prepareEarth() {
-        Sphere sphere = new Sphere(150);
+        Sphere sphere = new Sphere(200);
         PhongMaterial earthMaterial = new PhongMaterial();
         try {
-            earthMaterial.setDiffuseMap(new Image(Earth.class.getResourceAsStream("/resources/earth/earth-d.jpg")));
-            earthMaterial.setSelfIlluminationMap(new Image(Earth.class.getResourceAsStream("/resources/earth/earth-l.jpg")));
-            earthMaterial.setSpecularMap(new Image(Earth.class.getResourceAsStream("/resources/earth/earth-s.jpg")));
-            earthMaterial.setBumpMap(new Image(Earth.class.getResourceAsStream("/resources/earth/earth-n.jpg")));
+            String earthPath = "/resources/earth/earth-d.jpg";
+            earthMaterial.setDiffuseMap(new Image(earthPath));
         } catch (Exception e) {
             System.err.println("Error loading Earth texture: " + e.getMessage());
             earthMaterial.setDiffuseColor(Color.BLUE); // Fallback color
