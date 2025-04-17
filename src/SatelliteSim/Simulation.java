@@ -54,7 +54,7 @@ public class Simulation {
         Group root = new Group();
         root.getChildren().add(backgroundGroup); // static
         root.getChildren().add(world);           // rotates with mouse
-        SubScene subScene = new SubScene(root, 800, 600, true, SceneAntialiasing.BALANCED);
+        SubScene subScene = new SubScene(root, 1500, 1000, true, SceneAntialiasing.BALANCED);
         subScene.setCamera(camera);
         initMouseControl(world, camera, subScene);
         prepareAnimation();
