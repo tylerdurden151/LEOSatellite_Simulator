@@ -61,7 +61,6 @@ import javafx.scene.shape.Box;
             material.setDiffuseColor(javafx.scene.paint.Color.GRAY);
         }
         visual.setMaterial(material);
-
         return visual;
     }
 
