@@ -42,9 +42,9 @@ public class SatelliteDataBaseManager {
             if (satellite.getMass() <= 0) {
                 throw new ValidationError("Invalid mass", "Mass must be positive. Given: " + satellite.getMass());
             }
-            satellite.setSatellite_ID(getSatelliteIdByName(satellite.getId()));
-            if (checkExistingSatellite(satellite.getId())) {
 
+            if (checkExistingSatellite(satellite.getId())) {
+                satellite.setSatellite_ID(getSatelliteIdByName(satellite.getId()));
                 updateSatellite(satellite);
             }else {
                 String sql = "INSERT INTO \"Satellite\" (\"SatelliteName\", \"User_ID\", \"Mass\", \"Altitude\", \"Area\") " +
