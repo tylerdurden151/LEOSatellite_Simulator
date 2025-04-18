@@ -42,6 +42,10 @@ public class SatelliteDataBaseManager {
             if (satellite.getMass() <= 0) {
                 throw new ValidationError("Invalid mass", "Mass must be positive. Given: " + satellite.getMass());
             }
+            // Prevent duplicate SatelliteName
+            if (satelliteNameExists(satellite.getId())) {
+                throw new ValidationError("Duplicate Satellite Name", "A satellite with this name already exists: " + satellite.getId());
+            }
 
             String sql = "INSERT INTO \"Satellite\" (\"SatelliteName\", \"User_ID\", \"Mass\", \"Altitude\", \"Area\") " +
                     "VALUES (?, ?, ?, ?, ?)";
@@ -139,6 +143,18 @@ public class SatelliteDataBaseManager {
                 throw new DatabaseError("Database connection failed", e.getMessage());
             }
         }
+    private boolean satelliteNameExists(String name) throws DatabaseError {
+        String sql = "SELECT 1 FROM \"Satellite\" WHERE \"SatelliteName\" = ?";
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, name);
+            ResultSet rs = pstmt.executeQuery();
+            return rs.next();
+        } catch (SQLException e) {
+            throw new DatabaseError("Error checking existing SatelliteName", e.getMessage());
+        }
+    }
+
 
     }
 

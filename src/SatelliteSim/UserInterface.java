@@ -170,11 +170,15 @@ public class UserInterface {
         //Satellite satellite = new Satellite(id, mass, area, altitude, speed);
         // instantiate a database manager
         SatelliteDataBaseManager dbManager = new SatelliteDataBaseManager();
-
+        try {
         Satellite satellite = new Satellite(1,id, mass, area, altitude);
         dbManager.addSatellite(satellite);
         this.satellite = satellite;
-
+        } catch (ValidationError ve) {
+            showAlert("Validation Error", ve.getMessage() + "\n" + ve.getErrorDetails());
+        } catch (DatabaseError de) {
+            showAlert("Database Error", de.getMessage() + "\n" + de.getErrorDetails());
+        }
         // Step 3: Perform calculations
         double period = OrbitalPeriod.calculatePeriod(satellite);
         double ballistic = Ballistic.calculateBallisticCoefficient(satellite);
@@ -358,4 +362,12 @@ public class UserInterface {
         return String.format("ID: %s, Mass: %d kg, Area: %d m², Altitude: %d m", id, mass, area, altitude);
     }
 */
+private void showAlert(String title, String message) {
+    Alert alert = new Alert(Alert.AlertType.ERROR);
+    alert.setTitle(title);
+    alert.setHeaderText(null);
+    alert.setContentText(message);
+    alert.showAndWait();
+}
+
 }
