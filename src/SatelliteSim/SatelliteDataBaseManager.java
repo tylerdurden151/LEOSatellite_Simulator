@@ -42,24 +42,47 @@ public class SatelliteDataBaseManager {
             if (satellite.getMass() <= 0) {
                 throw new ValidationError("Invalid mass", "Mass must be positive. Given: " + satellite.getMass());
             }
+            satellite.setSatellite_ID(getSatelliteIdByName(satellite.getId()));
+            if (checkExistingSatellite(satellite.getId())) {
 
-            String sql = "INSERT INTO \"Satellite\" (\"SatelliteName\", \"User_ID\", \"Mass\", \"Altitude\", \"Area\") " +
-                    "VALUES (?, ?, ?, ?, ?)";
-            try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
-                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setString(1, satellite.getId());
-                pstmt.setInt(2, satellite.getUser_Id());
-                pstmt.setDouble(3, satellite.getMass());
-                pstmt.setDouble(4, satellite.getAltitude());
-                pstmt.setDouble(5, satellite.getArea());
-                pstmt.executeUpdate();
-                satellite.setSatellite_ID(getSatelliteIdByName(satellite.getId()));
-            } catch (SQLException e) {
-                throw new DatabaseError("Failed to insert satellite", e.getMessage());
+                updateSatellite(satellite);
+            }else {
+                String sql = "INSERT INTO \"Satellite\" (\"SatelliteName\", \"User_ID\", \"Mass\", \"Altitude\", \"Area\") " +
+                        "VALUES (?, ?, ?, ?, ?)";
+                try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+                     PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                    pstmt.setString(1, satellite.getId());
+                    pstmt.setInt(2, satellite.getUser_Id());
+                    pstmt.setDouble(3, satellite.getMass());
+                    pstmt.setDouble(4, satellite.getAltitude());
+                    pstmt.setDouble(5, satellite.getArea());
+                    pstmt.executeUpdate();
+                    satellite.setSatellite_ID(getSatelliteIdByName(satellite.getId()));
+                } catch (SQLException e) {
+                    throw new DatabaseError("Failed to insert satellite", e.getMessage());
+                }
             }
         }
+    public boolean checkExistingSatellite(String satelliteName) throws DatabaseError {
+        String sql = "SELECT COUNT(*) AS count FROM \"Satellite\" WHERE \"SatelliteName\" = ?";
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-        // New Method: Delete a Satellite by ID
+            pstmt.setString(1, satelliteName);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                int count = rs.getInt("count");
+                return count > 0; // Return true if count > 0 (satellite exists)
+            }
+        } catch (SQLException e) {
+            throw new DatabaseError("Database connection failed", e.getMessage());
+        }
+        return false; // Return false if no satellite found
+    }
+
+
+    // New Method: Delete a Satellite by ID
         public void deleteSatelliteById(int id) throws DatabaseError {
             String sql = "DELETE FROM \"Satellite\" WHERE \"Satellite_ID\" = ?";
             try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
@@ -80,7 +103,7 @@ public class SatelliteDataBaseManager {
                 throw new ValidationError("Invalid mass", "Mass must be positive. Given: " + satellite.getMass());
             }
 
-            String sql = "UPDATE \"Satellite\" SET \"SatelliteName\" = ?, \"User_ID\" = ?, \"Mass\" = ?, \"Altitude\" = ?, " +
+            String sql = "UPDATE public.\"Satellite\" SET \"SatelliteName\" = ?, \"User_ID\" = ?, \"Mass\" = ?, \"Altitude\" = ?, " +
                     "\"Area\" = ? WHERE \"Satellite_ID\" = ?";
             try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
                  PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -88,9 +111,8 @@ public class SatelliteDataBaseManager {
                 pstmt.setLong(2, satellite.getUser_Id());
                 pstmt.setDouble(3, satellite.getMass());
                 pstmt.setDouble(4, satellite.getAltitude());
-                pstmt.setDouble(5, satellite.getSpeed());
-                pstmt.setDouble(6, satellite.getArea());
-                pstmt.setInt(7, satellite.getSatellite_ID());
+                pstmt.setDouble(5, satellite.getArea());
+                pstmt.setInt(6, satellite.getSatellite_ID());
                 int rowsAffected = pstmt.executeUpdate();
                 if (rowsAffected == 0) {
                     throw new DatabaseError("Satellite update failed", "No satellite found with ID: " + satellite.getSatellite_ID());
@@ -100,7 +122,7 @@ public class SatelliteDataBaseManager {
             }
         }
         public int getSatelliteIdByName(String satelliteName) throws DatabaseError {
-            String sql = "SELECT \"Satellite_ID\" FROM \"Satellite\" WHERE \"SatelliteName\" = ?";
+            String sql = "SELECT \"Satellite_ID\" FROM public.\"Satellite\" WHERE \"SatelliteName\" = ?";
             try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
                  PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 pstmt.setString(1, satelliteName);
@@ -115,9 +137,11 @@ public class SatelliteDataBaseManager {
             }
         }
         public String[] getSatelliteNamesAndIds() throws DatabaseError {
-            String sql = "SELECT \"Satellite_ID\", \"SatelliteName\" FROM \"Satellite\"";
+            String sql = "SELECT \"Satellite_ID\", \"SatelliteName\" FROM public.\"Satellite\"";
             try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
-                 Statement stmt = conn.createStatement();
+                 Statement stmt = conn.createStatement( ResultSet.TYPE_SCROLL_INSENSITIVE, // Makes the ResultSet scrollable
+                         ResultSet.CONCUR_READ_ONLY         // Makes it read-only
+                 );
                  ResultSet rs = stmt.executeQuery(sql)) {
 
                 // Determine the largest Satellite_ID for array size
@@ -133,6 +157,7 @@ public class SatelliteDataBaseManager {
                     int id = rs.getInt("Satellite_ID");
                     satelliteNames[id] = rs.getString("SatelliteName");
                 }
+                satelliteNames[0] ="New Satellite";
                 return satelliteNames;
 
             } catch (SQLException e) {

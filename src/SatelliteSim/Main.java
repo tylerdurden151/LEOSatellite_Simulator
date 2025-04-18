@@ -19,8 +19,17 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        // First UI (Login UI)
+        // On successful login, switch to the dropdown UI
+
+
+            SatelliteSimulatorLogin loginUI = new SatelliteSimulatorLogin();
+        loginUI.start(primaryStage);
+
+     loginUI.setOnLoginSuccess(() -> {
         UserInterface ui = new UserInterface();
         ui.build(primaryStage);
+    });
     }
 
     public static void main(String[] args) {
