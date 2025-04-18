@@ -24,6 +24,7 @@ public class UserInterface {
     private static final double HEIGHT = 1000;
     private Satellite satellite;
     private ObservableList<VBox> satelliteDataList = FXCollections.observableArrayList();
+    private enum    VType {INT,DOUBLE};
 
     // For Testing purposes variables
     String testIntString = "10";
@@ -52,22 +53,26 @@ public class UserInterface {
 
         // Text fields (initially disabled and smaller size)
         TextField idTextField = new TextField();
-        idTextField.setPromptText("Satellite Id");
+        idTextField.setPromptText("Satellite Name");
+
         idTextField.setDisable(true);
         idTextField.setPrefWidth(200);
 
         TextField massTextField = new TextField();
         massTextField.setPromptText("mass in Kg");
+        validateText( massTextField,VType.DOUBLE);
         massTextField.setDisable(true);
         massTextField.setPrefWidth(200);
 
         TextField areaTextField = new TextField();
         areaTextField.setPromptText("area in square Meters");
+        validateText(areaTextField,VType.DOUBLE);
         areaTextField.setDisable(true);
         areaTextField.setPrefWidth(200);
 
         TextField altitudeTextField = new TextField();
         altitudeTextField.setPromptText("altitude in meters");
+        validateText(altitudeTextField,VType.DOUBLE);
         altitudeTextField.setDisable(true);
         altitudeTextField.setPrefWidth(200);
 
@@ -149,21 +154,39 @@ public class UserInterface {
         });
 
         // Layouts
+        // Layout for ComboBox and New Satellite button
         HBox cboBox = new HBox(10, satelliteDropdown, newSatelliteButton);
         cboBox.setAlignment(Pos.CENTER);
 
-        VBox idBox = new VBox(5, idLabel, idTextField);
-        VBox massBox = new VBox(5, massLabel, massTextField);
-        VBox areaBox = new VBox(5, areaLabel, areaTextField);
-        VBox altitudeBox = new VBox(5, altitudeLabel, altitudeTextField);
+// GridPane for aligning input fields and labels
+        GridPane inputGrid = new GridPane();
+        inputGrid.setHgap(10); // Horizontal gap between columns
+        inputGrid.setVgap(10); // Vertical gap between rows
+        inputGrid.setStyle("-fx-padding: 20;");
+        inputGrid.setAlignment(Pos.CENTER); // Center all components in the GridPane
 
-        VBox inputBox = new VBox(10, idBox, massBox, areaBox, altitudeBox, submitButton);
-        inputBox.setAlignment(Pos.CENTER);
-        inputBox.setStyle("-fx-padding: 20;");
+// Add labels and fields to the GridPane
+        inputGrid.add(idLabel, 0, 0);          // Column 0, Row 0
+        inputGrid.add(idTextField, 1, 0);      // Column 1, Row 0
+        inputGrid.add(massLabel, 0, 1);        // Column 0, Row 1
+        inputGrid.add(massTextField, 1, 1);    // Column 1, Row 1
+        inputGrid.add(areaLabel, 0, 2);        // Column 0, Row 2
+        inputGrid.add(areaTextField, 1, 2);    // Column 1, Row 2
+        inputGrid.add(altitudeLabel, 0, 3);    // Column 0, Row 3
+        inputGrid.add(altitudeTextField, 1, 3);// Column 1, Row 3
+        inputGrid.add(submitButton, 1, 4);     // Column 1, Row 4 (aligned under text fields)
 
-        VBox mainLayout = new VBox(20, cboBox, inputBox);
-        mainLayout.setStyle("-fx-padding: 20;");
+// Set consistent sizes for text fields
+        idTextField.setPrefWidth(200);
+        massTextField.setPrefWidth(200);
+        areaTextField.setPrefWidth(200);
+        altitudeTextField.setPrefWidth(200);
 
+// Main Layout
+        VBox mainLayout = new VBox(20, cboBox, inputGrid);
+        mainLayout.setStyle("-fx-padding: 20; -fx-alignment: center;");
+
+// Scene setup
         Scene scene = new Scene(mainLayout, WIDTH, HEIGHT);
         stage.setScene(scene);
         stage.setTitle("Satellite Manager");
@@ -390,68 +413,189 @@ public class UserInterface {
         Label massLabel = new Label("Mass");
         Label areaLabel = new Label("Area");
         Label altitudeLabel = new Label("Altitude");
+         //combo box
+        satelliteDropdown.setPromptText("Select a Satellite");
+        ObservableList<String> satelliteList = FXCollections.observableArrayList();
 
+        // Load ComboBox with satellite names
+        try {
+            loadUserSatellites(); // Populates satelliteList
+            //satelliteDropdown.setItems(satelliteList);
+        } catch (DatabaseError e) {
+            System.err.println("Error loading satellites: " + e.getMessage());
+        }
         // Text fields
-        TextField idTextField = new TextField(testString);
-        idTextField.setPromptText("Satellite Id");
+        TextField idTextField = new TextField();
+        idTextField.setPromptText("Satellite Name");
 
-        TextField massTextField = new TextField(testIntString);
+        idTextField.setDisable(true);
+        idTextField.setPrefWidth(200);
+
+        TextField massTextField = new TextField();
         massTextField.setPromptText("mass in Kg");
+        validateText( massTextField,VType.DOUBLE);
+        massTextField.setDisable(true);
+        massTextField.setPrefWidth(200);
 
-        TextField areaTextField = new TextField(testIntString);
+        TextField areaTextField = new TextField();
         areaTextField.setPromptText("area in square Meters");
+        validateText(areaTextField,VType.DOUBLE);
+        areaTextField.setDisable(true);
+        areaTextField.setPrefWidth(200);
 
-        TextField altitudeTextField = new TextField(testIntString);
+        TextField altitudeTextField = new TextField();
         altitudeTextField.setPromptText("altitude in meters");
+        validateText(altitudeTextField,VType.DOUBLE);
+        altitudeTextField.setDisable(true);
+        altitudeTextField.setPrefWidth(200);
 
-        // HBoxes
-        HBox idBox = new HBox(10);
-        idBox.setAlignment(Pos.CENTER);
-        idBox.getChildren().addAll(idLabel, idTextField);
+        //
+        // Submit Button (initially invisible)
+        Button submitButton = new Button("Submit");
+        submitButton.setVisible(false);
+        //submit action
+        submitButton.setOnAction(e -> {
+            try {
 
-        HBox massBox = new HBox(10);
-        massBox.setAlignment(Pos.CENTER);
-        massBox.getChildren().addAll(massLabel, massTextField);
-
-        HBox areaBox = new HBox(10);
-        areaBox.setAlignment(Pos.CENTER);
-        areaBox.getChildren().addAll(areaLabel, areaTextField);
-
-        HBox altitudeBox = new HBox(10);
-        altitudeBox.setAlignment(Pos.CENTER);
-        altitudeBox.getChildren().addAll(altitudeLabel, altitudeTextField);
-
-        Button addSatellite = new Button("Add Satellite");
-        addSatellite.setOnAction(e -> {
-                    try {
-
-                        showAnimation(idTextField, massTextField, areaTextField, altitudeTextField, (Stage) addSatellite.getScene().getWindow());
-                    } catch (DatabaseError dbError) {
-                        // Handle the custom DatabaseError here
-                        System.err.println("Database error occurred: " + dbError.getMessage());
-                        // Optionally show an alert to the user
-                        Alert alert = new Alert(Alert.AlertType.ERROR);
-                        alert.setTitle("Database Error");
-                        alert.setHeaderText("An error occurred while accessing the database.");
-                        alert.setContentText(dbError.getMessage());
-                        alert.showAndWait();
-                    } catch (Exception ex) {
-                        // Catch other unexpected exceptions
-                        System.err.println("An unexpected error occurred: " + ex.getMessage());
-                    }
-
+                // Call showAnimation with the provided input fields and stage
+                showAnimation(idTextField, massTextField, areaTextField, altitudeTextField, (Stage) submitButton.getScene().getWindow());
+            } catch (DatabaseError dbError) {
+                // Handle DatabaseError exceptions
+                System.err.println("Database error: " + dbError.getMessage());
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Database Error");
+                alert.setHeaderText("An error occurred");
+                alert.setContentText(dbError.getMessage());
+                alert.showAndWait();
+            } catch (ValidationError validationError) {
+                // Handle ValidationError exceptions
+                System.err.println("Validation error: " + validationError.getMessage());
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Validation Error");
+                alert.setHeaderText("Input Validation Failed");
+                alert.setContentText(validationError.getMessage());
+                alert.showAndWait();
+            } catch (Exception ex) {
+                // Handle any unexpected exceptions
+                System.err.println("An unexpected error occurred: " + ex.getMessage());
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Unexpected Error");
+                alert.setHeaderText("An unexpected error occurred");
+                alert.setContentText(ex.getMessage());
+                alert.showAndWait();
+            }
         });
 
-        //  addNewSatellite(idTextField, massTextField, areaTextField, altitudeTextField);
+        // Satellite Dropdown selection logic
+        satelliteDropdown.setOnAction(e -> {
+            String selectedSatellite = satelliteDropdown.getValue();
+            if (selectedSatellite != null) {
+                try {
+                    Satellite satellite = getSatelliteDataByName(selectedSatellite); // Fetch satellite data
 
-        VBox inputBox = new VBox(20, idBox, massBox, areaBox, altitudeBox, addSatellite);
-        inputBox.setAlignment(Pos.CENTER);
+                    idTextField.setText(satellite.getId());
+                    massTextField.setText(String.valueOf(satellite.getMass()));
+                    areaTextField.setText(String.valueOf(satellite.getArea()));
+                    altitudeTextField.setText(String.valueOf(satellite.getAltitude()));
+
+                    // Enable fields and show Submit button
+                    idTextField.setDisable(false);
+                    massTextField.setDisable(false);
+                    areaTextField.setDisable(false);
+                    altitudeTextField.setDisable(false);
+                    submitButton.setVisible(true);
+                } catch (SQLException ex) {
+                    System.err.println("Error loading satellite data: " + ex.getMessage());
+                }
+            }
+        });
+
+        // "New Satellite" button logic
+        Button newSatelliteButton = new Button("New Satellite");
+        newSatelliteButton.setOnAction(e -> {
+            // Reset fields to default values
+            idTextField.setText("NewSatellite");
+            massTextField.setText("10");
+            areaTextField.setText("10");
+            altitudeTextField.setText("10");
+
+            // Enable fields and show Submit button
+            idTextField.setDisable(false);
+            massTextField.setDisable(false);
+            areaTextField.setDisable(false);
+            altitudeTextField.setDisable(false);
+            submitButton.setVisible(true);
+        });
+
+        // Layout for ComboBox and New Satellite button
+        HBox cboBox = new HBox(10, satelliteDropdown, newSatelliteButton);
+        cboBox.setAlignment(Pos.CENTER);
+
+// GridPane for aligning input fields and labels
+        GridPane inputGrid = new GridPane();
+        inputGrid.setHgap(10); // Horizontal gap between columns
+        inputGrid.setVgap(10); // Vertical gap between rows
+        inputGrid.setStyle("-fx-padding: 20;");
+        inputGrid.setAlignment(Pos.CENTER); // Center all components in the GridPane
+
+// Add labels and fields to the GridPane
+        inputGrid.add(idLabel, 0, 0);          // Column 0, Row 0
+        inputGrid.add(idTextField, 1, 0);      // Column 1, Row 0
+        inputGrid.add(massLabel, 0, 1);        // Column 0, Row 1
+        inputGrid.add(massTextField, 1, 1);    // Column 1, Row 1
+        inputGrid.add(areaLabel, 0, 2);        // Column 0, Row 2
+        inputGrid.add(areaTextField, 1, 2);    // Column 1, Row 2
+        inputGrid.add(altitudeLabel, 0, 3);    // Column 0, Row 3
+        inputGrid.add(altitudeTextField, 1, 3);// Column 1, Row 3
+        inputGrid.add(submitButton, 1, 4);     // Column 1, Row 4 (aligned under text fields)
+
+// Set consistent sizes for text fields
+        idTextField.setPrefWidth(200);
+        massTextField.setPrefWidth(200);
+        areaTextField.setPrefWidth(200);
+        altitudeTextField.setPrefWidth(200);
+
+// Main Layout
+        VBox inputBox =new VBox(20, cboBox, inputGrid);
         inputBox.setStyle("-fx-padding: 20; -fx-alignment: center;");
+
+
+
+
+
+
 
 
 
         return inputBox;
     }
+    private static void validateText(TextField txtValidate, VType vType){
+
+        switch (vType){
+            case INT:
+                txtValidate.textProperty().addListener((observable,oldValue, newValue) ->{
+                    // validate data  must be int or double
+                    if(!newValue.matches("\\d*")){
+                        txtValidate.setText(newValue.replaceAll("[^\\d]",""));
+                    }
+
+                });
+                break;
+            case DOUBLE:
+                txtValidate.textProperty().addListener((observable,oldValue, newValue) ->{
+                    // validate data  must be int or double
+                    if(!newValue.matches("\\d*(\\.\\d*)?")){
+                        txtValidate.setText(newValue.replaceAll("[^\\d.]",""));
+                    }
+
+                });
+                break;
+
+
+        }
+
+    }
+
 /*
     private String formatString(String id,int mass,int area, int altitude){
         return String.format("ID: %s, Mass: %d kg, Area: %d m², Altitude: %d m", id, mass, area, altitude);
