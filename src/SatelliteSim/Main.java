@@ -9,6 +9,8 @@
 
 //last edit done by Tim E 14:25 18 Apr 2025
 
+// Version 4.0
+
 package SatelliteSim;
 	
 
