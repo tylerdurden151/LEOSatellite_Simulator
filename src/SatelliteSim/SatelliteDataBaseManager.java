@@ -64,11 +64,12 @@ public class SatelliteDataBaseManager {
             }
         }
     public boolean checkExistingSatellite(String satelliteName) throws DatabaseError {
-        String sql = "SELECT COUNT(*) AS count FROM \"Satellite\" WHERE \"SatelliteName\" = ?";
+        String sql = "SELECT COUNT(*) AS count FROM \"Satellite\" WHERE \"SatelliteName\" = ? and \"USER_ID\" = ?";
         try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, satelliteName);
+            pstmt.setInt(2, SessionData.getUserID());
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
@@ -122,10 +123,11 @@ public class SatelliteDataBaseManager {
             }
         }
         public int getSatelliteIdByName(String satelliteName) throws DatabaseError {
-            String sql = "SELECT \"Satellite_ID\" FROM public.\"Satellite\" WHERE \"SatelliteName\" = ?";
+            String sql = "SELECT \"Satellite_ID\" FROM public.\"Satellite\" WHERE \"SatelliteName\" = ? and \"USER_ID\" = ?";
             try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
                  PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 pstmt.setString(1, satelliteName);
+                pstmt.setInt(2, SessionData.getUserID());
                 ResultSet rs = pstmt.executeQuery();
                 if (rs.next()) {
                     return rs.getInt("Satellite_ID");
@@ -136,36 +138,44 @@ public class SatelliteDataBaseManager {
                 throw new DatabaseError("Database connection failed", e.getMessage());
             }
         }
-        public String[] getSatelliteNamesAndIds() throws DatabaseError {
-            String sql = "SELECT \"Satellite_ID\", \"SatelliteName\" FROM public.\"Satellite\"";
-            try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
-                 Statement stmt = conn.createStatement( ResultSet.TYPE_SCROLL_INSENSITIVE, // Makes the ResultSet scrollable
-                         ResultSet.CONCUR_READ_ONLY         // Makes it read-only
-                 );
-                 ResultSet rs = stmt.executeQuery(sql)) {
+    public String[] getSatelliteNamesAndIds() throws DatabaseError {
+        String sql = "SELECT \"Satellite_ID\", \"SatelliteName\" FROM public.\"Satellite\" WHERE \"USER_ID\" = ?";
 
-                // Determine the largest Satellite_ID for array size
-                int maxId = 0;
-                while (rs.next()) {
-                    maxId = Math.max(maxId, rs.getInt("Satellite_ID"));
-                }
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+             PreparedStatement pstmt = conn.prepareStatement(
+                     sql,
+                     ResultSet.TYPE_SCROLL_INSENSITIVE, // Makes the ResultSet scrollable
+                     ResultSet.CONCUR_READ_ONLY         // Makes it read-only
+             )) {
+            // Set the parameter for USER_ID
+            pstmt.setInt(1, SessionData.getUserID());
 
-                // Create an array of satellite names indexed by Satellite_ID
-                String[] satelliteNames = new String[maxId + 1];
-                rs.beforeFirst(); // Reset the cursor to process rows again
-                while (rs.next()) {
-                    int id = rs.getInt("Satellite_ID");
-                    satelliteNames[id] = rs.getString("SatelliteName");
-                }
-                satelliteNames[0] ="New Satellite";
-                return satelliteNames;
+            ResultSet rs = pstmt.executeQuery();
 
-            } catch (SQLException e) {
-                throw new DatabaseError("Database connection failed", e.getMessage());
+            // Determine the largest Satellite_ID for array size
+            int maxId = 0;
+            while (rs.next()) {
+                maxId = Math.max(maxId, rs.getInt("Satellite_ID"));
             }
-        }
 
+            // Create an array of satellite names indexed by Satellite_ID
+            String[] satelliteNames = new String[maxId + 1];
+            rs.beforeFirst(); // Reset the cursor to process rows again
+            while (rs.next()) {
+                int id = rs.getInt("Satellite_ID");
+                satelliteNames[id] = rs.getString("SatelliteName");
+            }
+            satelliteNames[0] = "New Satellite";
+            return satelliteNames;
+
+        } catch (SQLException e) {
+            throw new DatabaseError("Database connection failed", e.getMessage());
+        }
     }
+
+
+
+}
 
 
 
