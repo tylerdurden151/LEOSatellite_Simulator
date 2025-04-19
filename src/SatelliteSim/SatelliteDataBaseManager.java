@@ -64,7 +64,7 @@ public class SatelliteDataBaseManager {
             }
         }
     public boolean checkExistingSatellite(String satelliteName) throws DatabaseError {
-        String sql = "SELECT COUNT(*) AS count FROM \"Satellite\" WHERE \"SatelliteName\" = ? and \"USER_ID\" = ?";
+        String sql = "SELECT COUNT(*) AS count FROM \"Satellite\" WHERE \"SatelliteName\" = ? and \"User_ID\" = ?";
         try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
@@ -123,7 +123,7 @@ public class SatelliteDataBaseManager {
             }
         }
         public int getSatelliteIdByName(String satelliteName) throws DatabaseError {
-            String sql = "SELECT \"Satellite_ID\" FROM public.\"Satellite\" WHERE \"SatelliteName\" = ? and \"USER_ID\" = ?";
+            String sql = "SELECT \"Satellite_ID\" FROM public.\"Satellite\" WHERE \"SatelliteName\" = ? and \"User_ID\" = ?";
             try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
                  PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 pstmt.setString(1, satelliteName);
@@ -139,7 +139,7 @@ public class SatelliteDataBaseManager {
             }
         }
     public String[] getSatelliteNamesAndIds() throws DatabaseError {
-        String sql = "SELECT \"Satellite_ID\", \"SatelliteName\" FROM public.\"Satellite\" WHERE \"USER_ID\" = ?";
+        String sql = "SELECT \"Satellite_ID\", \"SatelliteName\" FROM public.\"Satellite\" WHERE \"User_ID\" = ?";
 
         try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
              PreparedStatement pstmt = conn.prepareStatement(
