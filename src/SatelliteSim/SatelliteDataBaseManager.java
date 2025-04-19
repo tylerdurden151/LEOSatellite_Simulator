@@ -155,15 +155,17 @@ public class SatelliteDataBaseManager {
             // Determine the largest Satellite_ID for array size
             int maxId = 0;
             while (rs.next()) {
-                maxId = Math.max(maxId, rs.getInt("Satellite_ID"));
+                maxId ++;
             }
 
             // Create an array of satellite names indexed by Satellite_ID
             String[] satelliteNames = new String[maxId + 1];
             rs.beforeFirst(); // Reset the cursor to process rows again
-            while (rs.next()) {
-                int id = rs.getInt("Satellite_ID");
-                satelliteNames[id] = rs.getString("SatelliteName");
+            rs.next();
+            for( int i =1;  i <=  maxId; i++){
+
+                satelliteNames[i] = rs.getString("SatelliteName");
+                rs.next();
             }
             satelliteNames[0] = "New Satellite";
             return satelliteNames;
