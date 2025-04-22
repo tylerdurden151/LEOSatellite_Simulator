@@ -12,15 +12,13 @@ import java.sql.*;
 
 
 public class SatelliteDataBaseManager {
-        private static final String URL = "jdbc:postgresql://localhost:5432/SatelliteSimulator";
-        private static final String USER = "satellite_user";
-        private static final String PASSWORD = "123456789";
+
 
         // Method to get a Satellite by ID
         public Satellite getSatelliteById(int id) throws DatabaseError {
             Satellite satellite = null;
             String sql = "SELECT * FROM \"Satellite\" WHERE \"Satellite_ID\" = ?";
-            try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+            try (Connection conn = DatabaseConnection.getConnection();
                  PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 pstmt.setInt(1, id);
                 ResultSet rs = pstmt.executeQuery();
@@ -36,8 +34,33 @@ public class SatelliteDataBaseManager {
             }
             return satellite;
         }
+    //getSatelliteDataByName fetches satellite data based on the selected name:
+    public static Satellite getSatelliteDataByName(String satelliteName) throws SQLException {
+        try (Connection conn =DatabaseConnection.getConnection()) {
+            String query = "SELECT * FROM \"Satellite\" WHERE \"SatelliteName\" = ? and \"User_ID\" = ?";
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.setString(1, satelliteName);
+            stmt.setInt(2, SessionData.getUserID());
+            ResultSet rs = stmt.executeQuery();
 
-        // Method to insert a new Satellite into the database
+            if (rs.next()) {
+                int satellite_ID = rs.getInt("Satellite_ID");
+                int user_ID = rs.getInt("User_ID");
+                String id = satelliteName; // Use the satellite name as the ID
+                double mass = rs.getDouble("Mass");
+                double area = rs.getDouble("Area");
+                double altitude = rs.getDouble("Altitude");
+
+                // Create and return a Satellite object
+                Satellite satellite = new Satellite(user_ID, id, mass, area, altitude);
+                satellite.setSatellite_ID(satellite_ID); // Set the satellite_ID directly
+                return satellite;
+            }
+        }
+        throw new SQLException("No satellite found with name: " + satelliteName);
+    }
+
+    // Method to insert a new Satellite into the database
         public void addSatellite(Satellite satellite) throws ValidationError, DatabaseError {
             if (satellite.getMass() <= 0) {
                 throw new ValidationError("Invalid mass", "Mass must be positive. Given: " + satellite.getMass());
@@ -49,7 +72,7 @@ public class SatelliteDataBaseManager {
             }else {
                 String sql = "INSERT INTO \"Satellite\" (\"SatelliteName\", \"User_ID\", \"Mass\", \"Altitude\", \"Area\") " +
                         "VALUES (?, ?, ?, ?, ?)";
-                try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+                try (Connection conn = DatabaseConnection.getConnection();
                      PreparedStatement pstmt = conn.prepareStatement(sql)) {
                     pstmt.setString(1, satellite.getId());
                     pstmt.setInt(2, satellite.getUser_Id());
@@ -63,9 +86,9 @@ public class SatelliteDataBaseManager {
                 }
             }
         }
-    public boolean checkExistingSatellite(String satelliteName) throws DatabaseError {
+    public static boolean checkExistingSatellite(String satelliteName) throws DatabaseError {
         String sql = "SELECT COUNT(*) AS count FROM \"Satellite\" WHERE \"SatelliteName\" = ? and \"User_ID\" = ?";
-        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, satelliteName);
@@ -86,7 +109,7 @@ public class SatelliteDataBaseManager {
     // New Method: Delete a Satellite by ID
         public void deleteSatelliteById(int id) throws DatabaseError {
             String sql = "DELETE FROM \"Satellite\" WHERE \"Satellite_ID\" = ?";
-            try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+            try (Connection conn = DatabaseConnection.getConnection();
                  PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 pstmt.setInt(1, id);
                 int rowsAffected = pstmt.executeUpdate();
@@ -106,7 +129,7 @@ public class SatelliteDataBaseManager {
 
             String sql = "UPDATE public.\"Satellite\" SET \"SatelliteName\" = ?, \"User_ID\" = ?, \"Mass\" = ?, \"Altitude\" = ?, " +
                     "\"Area\" = ? WHERE \"Satellite_ID\" = ?";
-            try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+            try (Connection conn = DatabaseConnection.getConnection();
                  PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 pstmt.setString(1, satellite.getId());
                 pstmt.setLong(2, satellite.getUser_Id());
@@ -124,7 +147,7 @@ public class SatelliteDataBaseManager {
         }
         public int getSatelliteIdByName(String satelliteName) throws DatabaseError {
             String sql = "SELECT \"Satellite_ID\" FROM public.\"Satellite\" WHERE \"SatelliteName\" = ? and \"User_ID\" = ?";
-            try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+            try (Connection conn = DatabaseConnection.getConnection();
                  PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 pstmt.setString(1, satelliteName);
                 pstmt.setInt(2, SessionData.getUserID());
@@ -141,7 +164,7 @@ public class SatelliteDataBaseManager {
     public String[] getSatelliteNamesAndIds() throws DatabaseError {
         String sql = "SELECT \"Satellite_ID\", \"SatelliteName\" FROM public.\"Satellite\" WHERE \"User_ID\" = ?";
 
-        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(
                      sql,
                      ResultSet.TYPE_SCROLL_INSENSITIVE, // Makes the ResultSet scrollable
@@ -173,6 +196,21 @@ public class SatelliteDataBaseManager {
         } catch (SQLException e) {
             throw new DatabaseError("Database connection failed", e.getMessage());
         }
+    }
+    public static void deleteSatellite(Satellite satellite) throws DatabaseError {
+
+        String sql = "DELETE FROM public.\"Satellite\" WHERE \"Satellite_ID\" = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, satellite.getSatellite_ID()); // Sets the parameter in the query
+            pstmt.executeUpdate(); // Executes the delete command
+
+        } catch (SQLException e) {
+            System.out.println("Error deleting satellite: " + e.getMessage());
+        }
+
     }
 
 
