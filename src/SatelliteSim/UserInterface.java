@@ -17,15 +17,13 @@ import java.util.ArrayList;
 
 
 public class UserInterface {
-    private static final String URL = "jdbc:postgresql://localhost:5432/SatelliteSimulator";
-    private static final String USER = "satellite_user";
-    private static final String PASSWORD = "123456789";
+
     private static final double WIDTH = 1400;
     private static final double HEIGHT = 1000;
     private Satellite satellite;
     private ObservableList<VBox> satelliteDataList = FXCollections.observableArrayList();
     private enum    VType {INT,DOUBLE};
-
+    private Stage primaryStage;
     // For Testing purposes variables
     String testIntString = "10";
     String testString = "string";
@@ -39,7 +37,8 @@ public class UserInterface {
         Label areaLabel = new Label("Area");
         Label altitudeLabel = new Label("Altitude");
 
-
+        // Main Layout
+        VBox mainLayout;
         satelliteDropdown.setPromptText("Select a Satellite");
         ObservableList<String> satelliteList = FXCollections.observableArrayList();
 
@@ -79,12 +78,18 @@ public class UserInterface {
         // Submit Button (initially invisible)
         Button submitButton = new Button("Submit");
         submitButton.setVisible(false);
+        //Delete Button
+        Button deleteButton = new Button("Delete");
+        deleteButton.setVisible(false);
+
+
         //submit action
         submitButton.setOnAction(e -> {
             try {
 
                 // Call showAnimation with the provided input fields and stage
                 showAnimation(idTextField, massTextField, areaTextField, altitudeTextField, stage);
+                satelliteDropdown.setValue(satellite.getId());
             } catch (DatabaseError dbError) {
                 // Handle DatabaseError exceptions
                 System.err.println("Database error: " + dbError.getMessage());
@@ -117,20 +122,26 @@ public class UserInterface {
             String selectedSatellite = satelliteDropdown.getValue();
             if (selectedSatellite != null) {
                 try {
-                    Satellite satellite = getSatelliteDataByName(selectedSatellite); // Fetch satellite data
+                    if (SatelliteDataBaseManager.checkExistingSatellite(selectedSatellite)) {
+                        satellite = SatelliteDataBaseManager.getSatelliteDataByName(selectedSatellite); // Fetch satellite data
 
-                    idTextField.setText(satellite.getId());
-                    massTextField.setText(String.valueOf(satellite.getMass()));
-                    areaTextField.setText(String.valueOf(satellite.getArea()));
-                    altitudeTextField.setText(String.valueOf(satellite.getAltitude()));
-
+                        idTextField.setText(satellite.getId());
+                        massTextField.setText(String.valueOf(satellite.getMass()));
+                        areaTextField.setText(String.valueOf(satellite.getArea()));
+                        altitudeTextField.setText(String.valueOf(satellite.getAltitude()));
+                        idTextField.setDisable(false);
+                        massTextField.setDisable(false);
+                        areaTextField.setDisable(false);
+                        altitudeTextField.setDisable(false);
+                        submitButton.setVisible(true);
+                        deleteButton.setVisible(true);
+                    } else  {
+                        resetNewSatellite(idTextField, massTextField, areaTextField, altitudeTextField, submitButton, deleteButton);
+                        satelliteDropdown.setValue("New Satellite");
+                    }
                     // Enable fields and show Submit button
-                    idTextField.setDisable(false);
-                    massTextField.setDisable(false);
-                    areaTextField.setDisable(false);
-                    altitudeTextField.setDisable(false);
-                    submitButton.setVisible(true);
-                } catch (SQLException ex) {
+
+                } catch (SQLException | DatabaseError ex) {
                     System.err.println("Error loading satellite data: " + ex.getMessage());
                 }
             }
@@ -139,18 +150,8 @@ public class UserInterface {
         // "New Satellite" button logic
         Button newSatelliteButton = new Button("New Satellite");
         newSatelliteButton.setOnAction(e -> {
-            // Reset fields to default values
-            idTextField.setText("NewSatellite");
-            massTextField.setText("10");
-            areaTextField.setText("10");
-            altitudeTextField.setText("10");
-
-            // Enable fields and show Submit button
-            idTextField.setDisable(false);
-            massTextField.setDisable(false);
-            areaTextField.setDisable(false);
-            altitudeTextField.setDisable(false);
-            submitButton.setVisible(true);
+            resetNewSatellite(idTextField, massTextField,areaTextField,altitudeTextField,submitButton,deleteButton);
+            satelliteDropdown.setValue("New Satellite");
         });
 
         // Layouts
@@ -175,6 +176,7 @@ public class UserInterface {
         inputGrid.add(altitudeLabel, 0, 3);    // Column 0, Row 3
         inputGrid.add(altitudeTextField, 1, 3);// Column 1, Row 3
         inputGrid.add(submitButton, 1, 4);     // Column 1, Row 4 (aligned under text fields)
+        inputGrid.add(deleteButton, 0, 4);     // Column 0, Row 4
 
 // Set consistent sizes for text fields
         idTextField.setPrefWidth(200);
@@ -182,40 +184,63 @@ public class UserInterface {
         areaTextField.setPrefWidth(200);
         altitudeTextField.setPrefWidth(200);
 
-// Main Layout
-        VBox mainLayout = new VBox(20, cboBox, inputGrid);
+//set main lay out
+       mainLayout = new VBox(20, cboBox, inputGrid);
         mainLayout.setStyle("-fx-padding: 20; -fx-alignment: center;");
+        //delete button Action
+        deleteButton.setOnAction(event -> {
+            // Create a confirmation dialog
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
+                    "Are you sure you want to delete this satellite?",
+                    ButtonType.YES, ButtonType.CANCEL);
 
+            // Show the dialog and wait for a response
+            alert.setTitle("Confirm Deletion");
+            alert.setHeaderText(null); // Optional: Remove header for simplicity
+            alert.showAndWait().ifPresent(response -> {
+                if (response == ButtonType.YES) {
+                    // Call the delete method
+                    try {
+                        if(SatelliteDataBaseManager.checkExistingSatellite(satellite.getId())) {
+                            SatelliteDataBaseManager.deleteSatellite(satellite);
+                        }
+                        else {
+                            resetNewSatellite(idTextField, massTextField,areaTextField,altitudeTextField,submitButton,deleteButton);
+                            satelliteDropdown.setValue("New Satellite");
+                        }
+                    } catch (DatabaseError e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    // Refresh the GUI
+
+                    mainLayout.getChildren().clear();
+                    primaryStage = stage;
+                    build(primaryStage);
+                }
+            });
+        });
 // Scene setup
         Scene scene = new Scene(mainLayout, WIDTH, HEIGHT);
         stage.setScene(scene);
         stage.setTitle("Satellite Manager");
         stage.show();
     }
+    private void resetNewSatellite(TextField idField, TextField massField, TextField areaField, TextField altitudeField, Button submitButton, Button deleteButton){
+        satellite = new Satellite(SessionData.getUserID(),"NewSatellite",10,10,10);
+        // Reset fields to default values
+        idField.setText("NewSatellite");
+        massField.setText("10");
+        areaField.setText("10");
+        altitudeField.setText("10");
 
-    //getSatelliteDataByName fetches satellite data based on the selected name:
-    public Satellite getSatelliteDataByName(String satelliteName) throws SQLException {
-        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD)) {
-            String query = "SELECT * FROM \"Satellite\" WHERE \"SatelliteName\" = ?";
-            PreparedStatement stmt = conn.prepareStatement(query);
-            stmt.setString(1, satelliteName);
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                int satellite_ID = rs.getInt("Satellite_ID");
-                int user_ID = rs.getInt("User_ID");
-                String id = satelliteName; // Use the satellite name as the ID
-                double mass = rs.getDouble("Mass");
-                double area = rs.getDouble("Area");
-                double altitude = rs.getDouble("Altitude");
-
-                // Create and return a Satellite object
-                Satellite satellite = new Satellite(user_ID, id, mass, area, altitude);
-                satellite.setSatellite_ID(satellite_ID); // Set the satellite_ID directly
-                return satellite;
-            }
-        }
-        throw new SQLException("No satellite found with name: " + satelliteName);
+        // Enable fields and show Submit button
+        idField.setDisable(false);
+        massField.setDisable(false);
+        areaField.setDisable(false);
+        altitudeField.setDisable(false);
+        submitButton.setVisible(true);
+        deleteButton.setVisible(true);
     }
 
     /*
@@ -272,9 +297,9 @@ public class UserInterface {
         // instantiate a database manager
         SatelliteDataBaseManager dbManager = new SatelliteDataBaseManager();
 
-        Satellite satellite = new Satellite(SessionData.getUserID(),id, mass, area, altitude);
+        this.satellite = new Satellite(SessionData.getUserID(),id, mass, area, altitude);
         dbManager.addSatellite(satellite);
-        this.satellite = satellite;
+
 
         // Step 3: Perform calculations
         double period = OrbitalPeriod.calculatePeriod(satellite);
@@ -407,14 +432,15 @@ public class UserInterface {
     }
 
 
-    public VBox createInput (){
+    public VBox createInput () {
 
         Label idLabel = new Label("Satellite Id");
         Label massLabel = new Label("Mass");
         Label areaLabel = new Label("Area");
         Label altitudeLabel = new Label("Altitude");
-         //combo box
+        //combo box
         satelliteDropdown.setPromptText("Select a Satellite");
+        satelliteDropdown.setValue(satellite.getId());
         ObservableList<String> satelliteList = FXCollections.observableArrayList();
 
         // Load ComboBox with satellite names
@@ -427,32 +453,56 @@ public class UserInterface {
         // Text fields
         TextField idTextField = new TextField();
         idTextField.setPromptText("Satellite Name");
-
-        idTextField.setDisable(true);
         idTextField.setPrefWidth(200);
 
         TextField massTextField = new TextField();
         massTextField.setPromptText("mass in Kg");
-        validateText( massTextField,VType.DOUBLE);
-        massTextField.setDisable(true);
+        validateText(massTextField, VType.DOUBLE);
         massTextField.setPrefWidth(200);
 
         TextField areaTextField = new TextField();
         areaTextField.setPromptText("area in square Meters");
-        validateText(areaTextField,VType.DOUBLE);
-        areaTextField.setDisable(true);
+        validateText(areaTextField, VType.DOUBLE);
         areaTextField.setPrefWidth(200);
 
         TextField altitudeTextField = new TextField();
         altitudeTextField.setPromptText("altitude in meters");
-        validateText(altitudeTextField,VType.DOUBLE);
-        altitudeTextField.setDisable(true);
+        validateText(altitudeTextField, VType.DOUBLE);
         altitudeTextField.setPrefWidth(200);
 
         //
         // Submit Button (initially invisible)
         Button submitButton = new Button("Submit");
         submitButton.setVisible(false);
+        Button deleteButton = new Button("Delete");
+        deleteButton.setVisible(false);
+        //
+        if (satelliteDropdown.getValue() != null) {
+
+                idTextField.setText(satellite.getId());
+                massTextField.setText(String.valueOf(satellite.getMass()));
+                areaTextField.setText(String.valueOf(satellite.getArea()));
+                altitudeTextField.setText(String.valueOf(satellite.getAltitude()));
+
+                // Enable fields and show Submit button
+                idTextField.setDisable(false);
+                massTextField.setDisable(false);
+                areaTextField.setDisable(false);
+                altitudeTextField.setDisable(false);
+                submitButton.setVisible(true);
+                deleteButton.setVisible(true);
+
+
+        } else {
+            idTextField.setDisable(true);
+            massTextField.setDisable(true);
+            areaTextField.setDisable(true);
+            altitudeTextField.setDisable(true);
+            submitButton.setVisible(false);
+            deleteButton.setVisible(false);
+
+        }
+
         //submit action
         submitButton.setOnAction(e -> {
             try {
@@ -491,40 +541,37 @@ public class UserInterface {
             String selectedSatellite = satelliteDropdown.getValue();
             if (selectedSatellite != null) {
                 try {
-                    Satellite satellite = getSatelliteDataByName(selectedSatellite); // Fetch satellite data
+                    if (SatelliteDataBaseManager.checkExistingSatellite(selectedSatellite)) {
+                         satellite = SatelliteDataBaseManager.getSatelliteDataByName(selectedSatellite); // Fetch satellite data
 
-                    idTextField.setText(satellite.getId());
-                    massTextField.setText(String.valueOf(satellite.getMass()));
-                    areaTextField.setText(String.valueOf(satellite.getArea()));
-                    altitudeTextField.setText(String.valueOf(satellite.getAltitude()));
-
+                        idTextField.setText(satellite.getId());
+                        massTextField.setText(String.valueOf(satellite.getMass()));
+                        areaTextField.setText(String.valueOf(satellite.getArea()));
+                        altitudeTextField.setText(String.valueOf(satellite.getAltitude()));
+                        idTextField.setDisable(false);
+                        massTextField.setDisable(false);
+                        areaTextField.setDisable(false);
+                        altitudeTextField.setDisable(false);
+                        submitButton.setVisible(true);
+                        deleteButton.setVisible(true);
+                    } else  {
+                        resetNewSatellite(idTextField, massTextField, areaTextField, altitudeTextField, submitButton, deleteButton);
+                        satelliteDropdown.setValue("New Satellite");
+                    }
                     // Enable fields and show Submit button
-                    idTextField.setDisable(false);
-                    massTextField.setDisable(false);
-                    areaTextField.setDisable(false);
-                    altitudeTextField.setDisable(false);
-                    submitButton.setVisible(true);
-                } catch (SQLException ex) {
-                    System.err.println("Error loading satellite data: " + ex.getMessage());
+
+
+                } catch (SQLException | DatabaseError ex) {
+                    throw new RuntimeException(ex);
                 }
-            }
-        });
+            }});
 
         // "New Satellite" button logic
         Button newSatelliteButton = new Button("New Satellite");
         newSatelliteButton.setOnAction(e -> {
             // Reset fields to default values
-            idTextField.setText("NewSatellite");
-            massTextField.setText("10");
-            areaTextField.setText("10");
-            altitudeTextField.setText("10");
-
-            // Enable fields and show Submit button
-            idTextField.setDisable(false);
-            massTextField.setDisable(false);
-            areaTextField.setDisable(false);
-            altitudeTextField.setDisable(false);
-            submitButton.setVisible(true);
+            resetNewSatellite(idTextField, massTextField,areaTextField,altitudeTextField,submitButton,deleteButton);
+            satelliteDropdown.setValue("New Satellite");
         });
 
         // Layout for ComboBox and New Satellite button
@@ -548,7 +595,7 @@ public class UserInterface {
         inputGrid.add(altitudeLabel, 0, 3);    // Column 0, Row 3
         inputGrid.add(altitudeTextField, 1, 3);// Column 1, Row 3
         inputGrid.add(submitButton, 1, 4);     // Column 1, Row 4 (aligned under text fields)
-
+        inputGrid.add(deleteButton, 0, 4);     // Column 0, Row 4
 // Set consistent sizes for text fields
         idTextField.setPrefWidth(200);
         massTextField.setPrefWidth(200);
@@ -559,7 +606,44 @@ public class UserInterface {
         VBox inputBox =new VBox(20, cboBox, inputGrid);
         inputBox.setStyle("-fx-padding: 20; -fx-alignment: center;");
 
+        //delete button Action
+        deleteButton.setOnAction(event -> {
+            // Create a confirmation dialog
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
+                    "Are you sure you want to delete this satellite?",
+                    ButtonType.YES, ButtonType.CANCEL);
 
+            // Show the dialog and wait for a response
+            alert.setTitle("Confirm Deletion");
+            alert.setHeaderText(null); // Optional: Remove header for simplicity
+            alert.showAndWait().ifPresent(response -> {
+                if (response == ButtonType.YES) {
+                    // Call the delete method
+                    try {
+                        if(SatelliteDataBaseManager.checkExistingSatellite(satellite.getId())) {
+                            SatelliteDataBaseManager.deleteSatellite(satellite);
+                        }
+                       // else {
+                       //     resetNewSatellite(idTextField, massTextField,areaTextField,altitudeTextField,submitButton,deleteButton);
+                       // }
+                    } catch (DatabaseError e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    resetNewSatellite(idTextField, massTextField,areaTextField,altitudeTextField,submitButton,deleteButton);
+                    satelliteDropdown.setPromptText("Select a Satellite");
+                    satelliteDropdown.setValue("New Satellite");
+                                       // Load ComboBox with satellite names
+                    try {
+                        loadUserSatellites(); // Populates satelliteList
+                        //satelliteDropdown.setItems(satelliteList);
+                    } catch (DatabaseError e) {
+                        System.err.println("Error loading satellites: " + e.getMessage());
+                    }
+
+                }
+            });
+        });
 
 
 
