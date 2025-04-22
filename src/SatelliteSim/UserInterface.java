@@ -1,5 +1,7 @@
 package application;
 
+package application;
+
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -9,6 +11,8 @@ import javafx.scene.SubScene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
 import java.sql.*;
@@ -181,7 +185,15 @@ public class UserInterface {
 
         //set main lay out
         mainLayout = new VBox(20, cboBox, inputGrid);
-        mainLayout.setStyle("-fx-padding: 20; -fx-alignment: center;");
+        mainLayout.setStyle("-fx-padding: 20; -fx-alignment: center; -fx-background-color: transparent;");
+
+        // Create background ImageView
+        ImageView backgroundImageView = prepareBackgroundImageView();
+
+        // Use StackPane to layer background image behind mainLayout
+        StackPane root = new StackPane();
+        root.getChildren().addAll(backgroundImageView, mainLayout);
+
         //delete button Action
         deleteButton.setOnAction(event -> {
             // Create a confirmation dialog
@@ -207,7 +219,6 @@ public class UserInterface {
                     }
 
                     // Refresh the GUI
-
                     mainLayout.getChildren().clear();
                     primaryStage = stage;
                     build(primaryStage);
@@ -215,10 +226,29 @@ public class UserInterface {
             });
         });
         // Scene setup
-        Scene scene = new Scene(mainLayout, WIDTH, HEIGHT);
+        Scene scene = new Scene(root, WIDTH, HEIGHT);
+        scene.setFill(Color.BLACK); // Fallback background color
         stage.setScene(scene);
         stage.setTitle("Satellite Manager");
         stage.show();
+    }
+
+    private ImageView prepareBackgroundImageView() {
+        ImageView imageView = new ImageView();
+        try {
+            // Use file: protocol for absolute paths
+            String appBackground = "file:C:/Computer Science Major/ProjectOrionV2/src/Images/appBackgroundCustom.png";
+            Image image = new Image(appBackground);
+            imageView.setImage(image);
+            imageView.setPreserveRatio(true);
+            // Fit the image to the scene dimensions
+            imageView.setFitWidth(WIDTH);
+            imageView.setFitHeight(HEIGHT);
+        } catch (Exception e) {
+            System.err.println("Error loading background image: " + e.getMessage());
+            System.err.println("Please ensure the image is located at 'C:/Computer Science Major/ProjectOrionV2/src/Images/appBackgroundCustom.png'.");
+        }
+        return imageView;
     }
 
     private void resetNewSatellite(TextField idField, TextField massField, TextField areaField, TextField altitudeField, Button submitButton, Button deleteButton) {
@@ -270,15 +300,9 @@ public class UserInterface {
             return;
         }
 
-        // Original code continues unchanged
-        TabPane layout = new TabPane();
-        Tab simTab = new Tab("Simulation");
-        //Simulation Tab_________________________________________________________________
-        //Create Satellite from user inputs
+        // Create Satellite from user inputs
         double mass = Double.parseDouble(massField.getText());
         double area = Double.parseDouble(areaField.getText());
-        //int speed = Integer.parseInt(speedField.getText());
-        //Satellite satellite = new Satellite(id, mass, area, altitude);
         // instantiate a database manager
         SatelliteDataBaseManager dbManager = new SatelliteDataBaseManager();
 
@@ -291,6 +315,12 @@ public class UserInterface {
         double totalOrbits = new NumOrbitsLifecycle(satellite).calculateNumberOfOrbits();
         String reentryFormattedTime = new Retrograde(satellite).getReentryTimeframe();
 
+        // Create TabPane for simulation and UI tabs
+        TabPane layout = new TabPane();
+        layout.setStyle("-fx-background-color: transparent;"); // Ensure TabPane is transparent
+        Tab simTab = new Tab("Simulation");
+
+        // Simulation Tab
         Simulation simulation = new Simulation(satellite);
         SubScene simScene = simulation.getSubScene();
         simScene.setFill(Color.BLACK);
@@ -298,26 +328,28 @@ public class UserInterface {
         VBox simLayout = new VBox(simScene);
         simTab.setContent(simLayout);
 
-        //UI Tab__________________________________________________________________________
+        // UI Tab
         ListView<VBox> listView = new ListView<>(satelliteDataList);
         listView.setPrefSize(300, 400);
 
-        VBox addSatellite = createInput();
+        StackPane addSatellite = createInput();
         ScrollPane scrollPane = new ScrollPane(listView);
         scrollPane.setFitToWidth(true);
         scrollPane.setFitToHeight(true);
 
         BorderPane uiPane = new BorderPane();
+        uiPane.setStyle("-fx-background-color: transparent;"); // Ensure BorderPane is transparent
         uiPane.setLeft(scrollPane);
         uiPane.setCenter(addSatellite);
 
         Tab uiTab = new Tab("UI Tab", uiPane);
-        // UI Tab_________________________________________________________________________________
 
+        // Add tabs to TabPane
         layout.getTabs().addAll(simTab, uiTab);
 
+        // Create and set new scene
         Scene resultScene = new Scene(layout, WIDTH, HEIGHT);
-        resultScene.setFill(Color.LIGHTGRAY);
+        resultScene.setFill(Color.BLACK); // Fallback background color
 
         stage.setScene(resultScene);
         showSatelliteData(satellite, period, ballistic, totalOrbits, reentryFormattedTime);
@@ -369,14 +401,13 @@ public class UserInterface {
 
         satelliteBox.setAlignment(Pos.CENTER_LEFT);
         satelliteBox.setSpacing(5);
-        satelliteBox.setStyle("-fx-padding: 10; -fx-border-color: gray; -fx-border-width: 1;");
+        satelliteBox.setStyle("-fx-padding: 10; -fx-border-color: gray; -fx-border-width: 1; -fx-background-color: transparent;");
 
         // Add to the UI container
         satelliteDataList.add(satelliteBox);
     }
 
-    public VBox createInput() {
-
+    public StackPane createInput() {
         Label idLabel = new Label("Satellite Id");
         Label massLabel = new Label("Mass");
         Label areaLabel = new Label("Area");
@@ -413,15 +444,13 @@ public class UserInterface {
         validateText(altitudeTextField, VType.DOUBLE);
         altitudeTextField.setPrefWidth(200);
 
-        //
         // Submit Button (initially invisible)
         Button submitButton = new Button("Submit");
         submitButton.setVisible(false);
         Button deleteButton = new Button("Delete");
         deleteButton.setVisible(false);
-        //
-        if (satelliteDropdown.getValue() != null) {
 
+        if (satelliteDropdown.getValue() != null) {
             idTextField.setText(satellite.getId());
             massTextField.setText(String.valueOf(satellite.getMass()));
             areaTextField.setText(String.valueOf(satellite.getArea()));
@@ -434,7 +463,6 @@ public class UserInterface {
             altitudeTextField.setDisable(false);
             submitButton.setVisible(true);
             deleteButton.setVisible(true);
-
         } else {
             idTextField.setDisable(true);
             massTextField.setDisable(true);
@@ -542,9 +570,16 @@ public class UserInterface {
         areaTextField.setPrefWidth(200);
         altitudeTextField.setPrefWidth(200);
 
-        // Main Layout
+        // Main Layout for UI components
         VBox inputBox = new VBox(20, cboBox, inputGrid);
-        inputBox.setStyle("-fx-padding: 20; -fx-alignment: center;");
+        inputBox.setStyle("-fx-padding: 20; -fx-alignment: center; -fx-background-color: transparent;");
+
+        // Create background ImageView
+        ImageView backgroundImageView = prepareBackgroundImageView();
+
+        // Use StackPane to layer background image behind inputBox
+        StackPane root = new StackPane();
+        root.getChildren().addAll(backgroundImageView, inputBox);
 
         //delete button Action
         deleteButton.setOnAction(event -> {
@@ -584,7 +619,7 @@ public class UserInterface {
             });
         });
 
-        return inputBox;
+        return root;
     }
 
     private static void validateText(TextField txtValidate, VType vType) {
