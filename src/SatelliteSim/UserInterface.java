@@ -1,4 +1,4 @@
-package application;
+package SatelliteSim;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -231,16 +231,16 @@ public class UserInterface {
         ImageView imageView = new ImageView();
         try {
             // Use file: protocol for absolute paths
-            String appBackground = "file:C:/Computer Science Major/ProjectOrionV2/src/Images/appBackgroundCustom.png";
-            Image image = new Image(appBackground);
-            imageView.setImage(image);
-            imageView.setPreserveRatio(true);
+            String bgPath = "resources/background/appBackgroundCustom.png";
+            Image bg = new Image(bgPath, true);
+            imageView.setImage(bg);
+
             // Bind fitWidth and fitHeight to scene's dimensions
+            imageView.setPreserveRatio(false);
             imageView.fitWidthProperty().bind(scene.widthProperty());
             imageView.fitHeightProperty().bind(scene.heightProperty());
         } catch (Exception e) {
             System.err.println("Error loading background image: " + e.getMessage());
-            System.err.println("Please ensure the image is located at 'C:/Computer Science Major/ProjectOrionV2/src/Images/appBackgroundCustom.png'.");
         }
         return imageView;
     }
@@ -264,40 +264,46 @@ public class UserInterface {
 
     private void showAnimation(TextField idField, TextField massField, TextField areaField, TextField altitudeField, Stage stage) throws DatabaseError, ValidationError {
         // Validate satellite name length
+
+        // __________________________________________________User Input______________________________________________________________________________
+
         String id = idField.getText().trim();
         if (id.isEmpty() || id.length() < 3) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Validation Error");
-            alert.setHeaderText("Invalid Satellite Name");
-            alert.setContentText("Name must be at least three characters long");
-            alert.getDialogPane().lookup(".content.label").setStyle("-fx-text-fill: red;");
-            alert.showAndWait();
+            showAlert("Input Error", "Invalid Satellite Name", "Name must be at least three characters long.");
             return;
         }
 
-        // Validate altitude
-        double altitude;
+        double mass, area, altitude;
         try {
+            mass = Double.parseDouble(massField.getText());
+            area = Double.parseDouble(areaField.getText());
             altitude = Double.parseDouble(altitudeField.getText());
-        } catch (NumberFormatException e) {
-            throw new ValidationError("Invalid altitude", "Altitude must be a valid number");
+
+        } catch (NumberFormatException nfe) {
+            showAlert("Input Error", "Invalid numeric value.", "Mass, Area, and Altitude must be numeric.");
+            return;
+        }
+        if (mass <= 0 || area <= 0  || altitude <= 0) {
+            showAlert("Input Error", "Invalid numeric value.", "Mass, Area, and Altitude must be greater than 0.");
+            return;
         }
         if (altitude > 2_000_000) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Validation Error");
-            alert.setHeaderText("Invalid Altitude");
-            alert.setContentText("low earth orbit is less than 2000km according to European Space Agency definitions, please consult programming team");
-            alert.getDialogPane().lookup(".content.label").setStyle("-fx-text-fill: red;");
-            alert.showAndWait();
+            showAlert("Input Error", "Altitude too high.", "Low earth orbit is less than 2000km according to European Space Agency definitions, please consult programming team");
             return;
         }
 
-        // Create Satellite from user inputs
-        double mass = Double.parseDouble(massField.getText());
-        double area = Double.parseDouble(areaField.getText());
+        // __________________________________________________User Input______________________________________________________________________________
+
+
         SatelliteDataBaseManager dbManager = new SatelliteDataBaseManager();
 
         this.satellite = new Satellite(SessionData.getUserID(), id, mass, area, altitude);
+        if (dbManager.isSatelliteNameExists(satellite.getId())) {
+            throw new ValidationError(
+                    "Duplicate satellite name",
+                    "A satellite named “" + satellite.getId() + "” already exists."
+            );
+        }
         dbManager.addSatellite(satellite);
 
         // Perform calculations
@@ -462,25 +468,15 @@ public class UserInterface {
                 showAnimation(idTextField, massTextField, areaTextField, altitudeTextField, (Stage) submitButton.getScene().getWindow());
             } catch (DatabaseError dbError) {
                 System.err.println("Database error: " + dbError.getMessage());
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Database Error");
-                alert.setHeaderText("An error occurred");
-                alert.setContentText(dbError.getMessage());
-                alert.showAndWait();
+                showAlert("Databse Error", "An Error Occured", dbError.getMessage());
+
             } catch (ValidationError validationError) {
                 System.err.println("Validation error: " + validationError.getMessage());
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Validation Error");
-                alert.setHeaderText("Input Validation Failed");
-                alert.setContentText(validationError.getMessage());
-                alert.showAndWait();
+                showAlert("Validation Error", "Input Validation Failed", validationError.getMessage());
             } catch (Exception ex) {
                 System.err.println("An unexpected error occurred: " + ex.getMessage());
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Unexpected Error");
-                alert.setHeaderText("An unexpected error occurred");
-                alert.setContentText(ex.getMessage());
-                alert.showAndWait();
+                showAlert("Unexpected Error", "An Error Occured", ex.getMessage());
+
             }
         });
 
@@ -585,6 +581,21 @@ public class UserInterface {
         return root;
     }
 
+
+
+
+    // UI_Helper Functions
+    // This method shows the alert message for specific user validation
+
+    private void showAlert(String title, String header, String content) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+        alert.getDialogPane().lookup(".content.label").setStyle("-fx-text-fill: red;");
+        alert.showAndWait();
+    }
+
     private static void validateText(TextField txtValidate, VType vType) {
         switch (vType) {
             case INT:
@@ -603,4 +614,7 @@ public class UserInterface {
                 break;
         }
     }
+
+
+
 }

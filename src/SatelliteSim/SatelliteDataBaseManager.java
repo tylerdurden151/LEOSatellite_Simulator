@@ -213,6 +213,11 @@ public class SatelliteDataBaseManager {
 
     }
 
+    public boolean isSatelliteNameExists(String satelliteName) throws DatabaseError {
+        return checkExistingSatellite(satelliteName);
+    }
+
+
 
 
 }
