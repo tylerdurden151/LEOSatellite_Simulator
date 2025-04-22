@@ -1,3 +1,10 @@
+/* Project name: CMSC495
+ * File name: UserInterface.java
+ * Authors: Timothy Eckart, Tyler Blumenshine, Ricardo Gordon, Mitch Mclaughlin, Siddharth Patel
+ * Date: 23 Apr 2025
+ * Purpose: creates a user interface for the application
+ */
+
 package SatelliteSim;
 
 import javafx.application.Platform;
