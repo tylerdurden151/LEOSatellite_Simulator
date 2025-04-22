@@ -7,7 +7,7 @@
  *
  */
 
-//last edit done by Tim E 14:25 7 Apr 2025
+//last edit done by Sid Patel on 23 April
 
 package SatelliteSim;
 	
@@ -22,8 +22,7 @@ public class Main extends Application {
         // First UI (Login UI)
         // On successful login, switch to the dropdown UI
 
-
-            SatelliteSimulatorLogin loginUI = new SatelliteSimulatorLogin();
+        SatelliteSimulatorLogin loginUI = new SatelliteSimulatorLogin();
         loginUI.start(primaryStage);
 
      loginUI.setOnLoginSuccess(() -> {
