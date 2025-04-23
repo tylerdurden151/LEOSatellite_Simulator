@@ -1,5 +1,7 @@
 package application;
 
+
+
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -240,7 +242,6 @@ public class UserInterface {
             imageView.fitHeightProperty().bind(scene.heightProperty());
         } catch (Exception e) {
             System.err.println("Error loading background image: " + e.getMessage());
-            System.err.println("Please ensure the image is located at 'C:/Computer Science Major/ProjectOrionV2/src/Images/appBackgroundCustom.png'.");
         }
         return imageView;
     }
