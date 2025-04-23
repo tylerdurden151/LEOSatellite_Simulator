@@ -1,4 +1,4 @@
-package application;
+package SatelliteSim;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
