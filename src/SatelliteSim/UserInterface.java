@@ -15,6 +15,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -385,10 +386,13 @@ public class UserInterface {
         Label orbitsLabel = new Label(orbitsString);
         Label reentryLabel = new Label(reentryString);
 
+
+
         VBox satelliteBox = new VBox(
                 idLabel, massLabel, areaLabel, altitudeLabel,
                 periodLabel, ballisticLabel, orbitsLabel, reentryLabel
         );
+
 
         satelliteBox.setAlignment(Pos.CENTER_LEFT);
         satelliteBox.setSpacing(5);
@@ -436,7 +440,18 @@ public class UserInterface {
         submitButton.setVisible(false);
         Button deleteButton = new Button("Delete");
         deleteButton.setVisible(false);
-
+        // Create a button to export satellite data to Excel
+        Button exportButton = new Button("Export Satellites to Excel");
+        exportButton.setOnAction(event -> {
+            try {
+                SatelliteDataBaseManager.exportSatellitesToExcel(SessionData.getUserID(),primaryStage);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            System.out.println("Satellite data exported to Excel successfully.");
+        });
         if (satelliteDropdown.getValue() != null) {
             idTextField.setText(satellite.getId());
             massTextField.setText(String.valueOf(satellite.getMass()));
@@ -519,6 +534,7 @@ public class UserInterface {
         });
 
         HBox cboBox = new HBox(10, satelliteDropdown, newSatelliteButton);
+
         cboBox.setAlignment(Pos.CENTER);
 
         GridPane inputGrid = new GridPane();
@@ -535,13 +551,12 @@ public class UserInterface {
         inputGrid.add(areaTextField, 1, 2);
         inputGrid.add(altitudeLabel, 0, 3);
         inputGrid.add(altitudeTextField, 1, 3);
-        inputGrid.add(submitButton, 1, 4);
-        inputGrid.add(deleteButton, 0, 4);
+        HBox btnBox = new HBox(10, submitButton, deleteButton,exportButton);
+        inputGrid.add(btnBox, 1, 4);
+       // inputGrid.add(submitButton, 1, 4);
+       // inputGrid.add(deleteButton, 0, 4);
+        //inputGrid.add(exportButton, 0, 4);//exportButton
 
-        idTextField.setPrefWidth(200);
-        massTextField.setPrefWidth(200);
-        areaTextField.setPrefWidth(200);
-        altitudeTextField.setPrefWidth(200);
 
         VBox inputBox = new VBox(20, cboBox, inputGrid);
         inputBox.setStyle("-fx-padding: 20; -fx-alignment: center; -fx-background-color: transparent;");
