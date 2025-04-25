@@ -46,7 +46,7 @@ public class UserInterface {
         scene.setFill(Color.BLACK); // Fallback background color
 
         ImageView backgroundImageView = prepareBackgroundImageView(scene);
-        root.getChildren().addFirst(backgroundImageView); // Add behind mainLayout
+        root.getChildren().add(backgroundImageView); // Add behind mainLayout
 
         stage.setScene(scene);
         stage.setTitle("Satellite Manager");
@@ -178,7 +178,7 @@ public class UserInterface {
         resultScene.setFill(Color.BLACK);
 
         ImageView backgroundImageView = prepareBackgroundImageView(resultScene);
-        addSatellite.getChildren().addFirst(backgroundImageView); // Add behind mainLayout
+        addSatellite.getChildren().add(backgroundImageView); // Add behind mainLayout
 
         stage.setScene(resultScene);
         showSatelliteData(satellite, period, ballistic, totalOrbits, reentryFormattedTime);
