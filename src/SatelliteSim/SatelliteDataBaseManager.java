@@ -8,13 +8,147 @@
 
 package SatelliteSim;
 
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.*;
 
 
 public class SatelliteDataBaseManager {
 
+    public static void exportSatellitesToExcel(int userId, Stage stage) throws SQLException, IOException {
+        // Use FileChooser to let the user select the file path
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save Satellite Data");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Excel Files", "*.xls"));
+        File selectedFile = fileChooser.showSaveDialog(stage);
 
-        // Method to get a Satellite by ID
+        // Check if the user selected a file
+        if (selectedFile == null) {
+            System.out.println("Export cancelled by the user.");
+            return; // Exit if no file was selected
+        }
+
+        String filePath = selectedFile.getAbsolutePath();
+
+        // Define SQL query to fetch satellite data
+        String query = "SELECT \"SatelliteName\", \"Mass\", \"Area\", \"Altitude\" FROM public.\"Satellite\" WHERE \"User_ID\" = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            pstmt.setInt(1, userId);
+            ResultSet rs = pstmt.executeQuery();
+
+            // Start writing the Excel XML content
+            try (FileWriter writer = new FileWriter(filePath)) {
+                // Write the XML header
+                writer.write("<?xml version=\"1.0\"?>\n");
+                writer.write("<Workbook xmlns=\"urn:schemas-microsoft-com:office:spreadsheet\"\n");
+                writer.write(" xmlns:o=\"urn:schemas-microsoft-com:office:office\"\n");
+                writer.write(" xmlns:x=\"urn:schemas-microsoft-com:office:excel\"\n");
+                writer.write(" xmlns:ss=\"urn:schemas-microsoft-com:office:spreadsheet\">\n");
+                // Define styles
+                writer.write("<Styles>\n");
+
+// Header Style: Green background and bold borders
+                writer.write("<Style ss:ID=\"Header\">\n");
+                writer.write("<Interior ss:Color=\"#00FF00\" ss:Pattern=\"Solid\"/>\n"); // Green background
+                writer.write("<Borders>\n");
+                writer.write("<Border ss:Position=\"Left\" ss:LineStyle=\"Continuous\" ss:Weight=\"1\"/>\n");
+                writer.write("<Border ss:Position=\"Right\" ss:LineStyle=\"Continuous\" ss:Weight=\"1\"/>\n");
+                writer.write("<Border ss:Position=\"Top\" ss:LineStyle=\"Continuous\" ss:Weight=\"1\"/>\n");
+                writer.write("<Border ss:Position=\"Bottom\" ss:LineStyle=\"Continuous\" ss:Weight=\"1\"/>\n");
+                writer.write("</Borders>\n");
+                writer.write("</Style>\n");
+
+// Data Cell Style: Borders for table cells
+                writer.write("<Style ss:ID=\"Data\">\n");
+                writer.write("<Borders>\n");
+                writer.write("<Border ss:Position=\"Left\" ss:LineStyle=\"Continuous\" ss:Weight=\"1\"/>\n");
+                writer.write("<Border ss:Position=\"Right\" ss:LineStyle=\"Continuous\" ss:Weight=\"1\"/>\n");
+                writer.write("<Border ss:Position=\"Top\" ss:LineStyle=\"Continuous\" ss:Weight=\"1\"/>\n");
+                writer.write("<Border ss:Position=\"Bottom\" ss:LineStyle=\"Continuous\" ss:Weight=\"1\"/>\n");
+                writer.write("</Borders>\n");
+                writer.write("</Style>\n");
+
+// Default Style: No borders, plain appearance
+                writer.write("<Style ss:ID=\"Default\">\n");
+                writer.write("<Font ss:Color=\"#000000\"/>\n"); // Black text, no special formatting
+                writer.write("</Style>\n");
+
+                writer.write("</Styles>\n");
+
+// Begin worksheet and table
+                writer.write("<Worksheet ss:Name=\"User Satellites\">\n");
+                writer.write("<Table>\n");
+                //columns
+                writer.write("<Column ss:AutoFitWidth=\"1\" ss:Width=\"125\"/>\n"); // Satellite Name column
+                writer.write("<Column ss:AutoFitWidth=\"1\" ss:Width=\"50\"/>\n"); // Mass column
+                writer.write("<Column ss:AutoFitWidth=\"1\" ss:Width=\"50\"/>\n"); // Area column
+                writer.write("<Column ss:AutoFitWidth=\"1\" ss:Width=\"50\"/>\n"); // Altitude column
+                writer.write("<Column ss:AutoFitWidth=\"1\" ss:Width=\"50\"/>\n"); // Period column
+                writer.write("<Column ss:AutoFitWidth=\"1\" ss:Width=\"50\"/>\n"); // Ballistics column
+                writer.write("<Column ss:AutoFitWidth=\"1\" ss:Width=\"50\"/>\n"); // TotalOrbits column
+                writer.write("<Column ss:AutoFitWidth=\"1\" ss:Width=\"120\"/>\n"); // ReentryFormattedTime column
+// Write the header row
+                writer.write("<Row>\n");
+                writer.write("<Cell ss:StyleID=\"Header\"><Data ss:Type=\"String\">Satellite Name</Data></Cell>\n");
+                writer.write("<Cell ss:StyleID=\"Header\"><Data ss:Type=\"String\">Mass</Data></Cell>\n");
+                writer.write("<Cell ss:StyleID=\"Header\"><Data ss:Type=\"String\">Area</Data></Cell>\n");
+                writer.write("<Cell ss:StyleID=\"Header\"><Data ss:Type=\"String\">Altitude</Data></Cell>\n");
+                writer.write("<Cell ss:StyleID=\"Header\"><Data ss:Type=\"String\">Period</Data></Cell>\n");
+                writer.write("<Cell ss:StyleID=\"Header\"><Data ss:Type=\"String\">Ballistics</Data></Cell>\n");
+                writer.write("<Cell ss:StyleID=\"Header\"><Data ss:Type=\"String\">TotalOrbits</Data></Cell>\n");
+                writer.write("<Cell ss:StyleID=\"Header\"><Data ss:Type=\"String\">ReentryFormattedTime</Data></Cell>\n");
+                writer.write("</Row>\n");
+
+// Write the satellite data rows
+                while (rs.next()) {
+                    Satellite satellite = new Satellite(SessionData.getUserID(),rs.getString("SatelliteName"),rs.getInt("Mass"),rs.getInt("Area"),rs.getInt("Altitude"));
+                    // Perform calculations
+                    double period = OrbitalPeriod.calculatePeriod(satellite);
+                    double ballistic = Ballistic.calculateBallisticCoefficient(satellite);
+                    double totalOrbits = new NumOrbitsLifecycle(satellite).calculateNumberOfOrbits();
+                    String reentryFormattedTime = new Retrograde(satellite).getReentryTimeframe();
+
+                    writer.write("<Row>\n");
+                    writer.write("<Cell ss:StyleID=\"Data\"><Data ss:Type=\"String\">" + rs.getString("SatelliteName") + "</Data></Cell>\n");
+                    writer.write("<Cell ss:StyleID=\"Data\"><Data ss:Type=\"Number\">" + rs.getDouble("Mass") + "</Data></Cell>\n");
+                    writer.write("<Cell ss:StyleID=\"Data\"><Data ss:Type=\"Number\">" + rs.getDouble("Area") + "</Data></Cell>\n");
+                    writer.write("<Cell ss:StyleID=\"Data\"><Data ss:Type=\"Number\">" + rs.getDouble("Altitude") + "</Data></Cell>\n");
+                    writer.write("<Cell ss:StyleID=\"Data\"><Data ss:Type=\"Number\">" + period + "</Data></Cell>\n");
+                    writer.write("<Cell ss:StyleID=\"Data\"><Data ss:Type=\"Number\">" + ballistic + "</Data></Cell>\n");
+                    writer.write("<Cell ss:StyleID=\"Data\"><Data ss:Type=\"Number\">" + totalOrbits + "</Data></Cell>\n");
+                    writer.write("<Cell ss:StyleID=\"Data\"><Data ss:Type=\"String\">" + reentryFormattedTime + "</Data></Cell>\n");
+                    writer.write("</Row>\n");
+                }
+
+// Close the Table and Worksheet tags
+                writer.write("</Table>\n");
+
+// Apply autofilter to the table
+                writer.write("<AutoFilter x:Range=\"R1C1:R1C8\" xmlns=\"urn:schemas-microsoft-com:office:excel\"/>\n");
+
+                writer.write("</Worksheet>\n");
+
+
+
+
+                writer.write("</Workbook>\n");
+
+            }
+        }
+
+        System.out.println("Satellite data exported successfully to: " + filePath);
+    }
+
+
+
+    // Method to get a Satellite by ID
         public Satellite getSatelliteById(int id) throws DatabaseError {
             Satellite satellite = null;
             String sql = "SELECT * FROM \"Satellite\" WHERE \"Satellite_ID\" = ?";

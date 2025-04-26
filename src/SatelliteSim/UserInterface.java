@@ -20,6 +20,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.sql.*;
 
 public class UserInterface {
@@ -292,6 +293,17 @@ public class UserInterface {
         // Submit Button (initially invisible)
         Button submitButton = new Button("Submit");
         submitButton.setVisible(false);
+
+        Button exportButton = new Button("Export Satellites to Excel");
+        exportButton.setOnAction(event -> {
+            try {
+                SatelliteDataBaseManager.exportSatellitesToExcel(SessionData.getUserID(),primaryStage);
+            } catch (SQLException | IOException e) {
+                throw new RuntimeException(e);
+            }
+            System.out.println("Satellite data exported to Excel successfully.");
+        });
+
         //Delete Button
         Button deleteButton = new Button("Delete");
         deleteButton.setVisible(false);
@@ -357,8 +369,12 @@ public class UserInterface {
         inputGrid.add(areaTextField, 1, 2);
         inputGrid.add(altitudeLabel, 0, 3);
         inputGrid.add(altitudeTextField, 1, 3);
-        inputGrid.add(submitButton, 1, 4);
-        inputGrid.add(deleteButton, 0, 4);
+
+        HBox btnBox = new HBox(10, submitButton, deleteButton);
+        if (initialSceneCreated){
+            btnBox.getChildren().add(exportButton);
+        }
+        inputGrid.add(btnBox, 1, 4);
 
         idTextField.setPrefWidth(200);
         massTextField.setPrefWidth(200);
