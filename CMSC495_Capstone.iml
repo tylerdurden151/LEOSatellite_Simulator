@@ -13,7 +13,6 @@
     <orderEntry type="library" name="lib1" level="project" />
     <orderEntry type="library" name="postgresql-42.7.5" level="project" />
     <orderEntry type="library" name="mssql-jdbc-12.10.0.jre8-sources" level="project" />
-    <orderEntry type="library" name="postgresql-42.7.6" level="project" />
     <orderEntry type="library" name="postgresql-42.7.7" level="project" />
     <orderEntry type="module-library">
       <library>
@@ -26,5 +25,7 @@
     </orderEntry>
     <orderEntry type="library" name="commons-io-2.11.0" level="project" />
     <orderEntry type="library" name="commons-collections4-4.5.0" level="project" />
+    <orderEntry type="library" name="jbcrypt-0.4" level="project" />
+    <orderEntry type="library" name="postgresql-42.7.6" level="project" />
   </component>
 </module>

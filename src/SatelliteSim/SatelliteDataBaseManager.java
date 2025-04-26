@@ -23,9 +23,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+//import org.apache.poi.ss.usermodel.*;
+//import org.apache.poi.ss.util.CellRangeAddress;
+//import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class SatelliteDataBaseManager {
 
