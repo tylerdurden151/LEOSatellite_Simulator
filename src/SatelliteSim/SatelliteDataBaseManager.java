@@ -108,7 +108,7 @@ public class SatelliteDataBaseManager {
                 writer.write("<Cell ss:StyleID=\"Header\"><Data ss:Type=\"String\">Area</Data></Cell>\n");
                 writer.write("<Cell ss:StyleID=\"Header\"><Data ss:Type=\"String\">Altitude</Data></Cell>\n");
                 writer.write("<Cell ss:StyleID=\"Header\"><Data ss:Type=\"String\">Period</Data></Cell>\n");
-               writer.write("<Cell ss:StyleID=\"Header\"><Data ss:Type=\"String\">Ballistics</Data></Cell>\n");
+                writer.write("<Cell ss:StyleID=\"Header\"><Data ss:Type=\"String\">Ballistics</Data></Cell>\n");
                 writer.write("<Cell ss:StyleID=\"Header\"><Data ss:Type=\"String\">TotalOrbits</Data></Cell>\n");
                 writer.write("<Cell ss:StyleID=\"Header\"><Data ss:Type=\"String\">ReentryFormattedTime</Data></Cell>\n");
                 writer.write("</Row>\n");
@@ -154,25 +154,25 @@ public class SatelliteDataBaseManager {
     }
 
     // Method to get a Satellite by ID
-        public Satellite getSatelliteById(int id) throws DatabaseError {
-            Satellite satellite = null;
-            String sql = "SELECT * FROM \"Satellite\" WHERE \"Satellite_ID\" = ?";
-            try (Connection conn = DatabaseConnection.getConnection();
-                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setInt(1, id);
-                ResultSet rs = pstmt.executeQuery();
-                if (rs.next()) {
-                    satellite = new Satellite(rs.getInt("User_ID"), rs.getString("SatelliteName"),rs.getDouble("Mass"),rs.getDouble("Area"), rs.getDouble("Altitude"));
-                    satellite.setSatellite_ID(rs.getInt("Satellite_id"));
+    public Satellite getSatelliteById(int id) throws DatabaseError {
+        Satellite satellite = null;
+        String sql = "SELECT * FROM \"Satellite\" WHERE \"Satellite_ID\" = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                satellite = new Satellite(rs.getInt("User_ID"), rs.getString("SatelliteName"),rs.getDouble("Mass"),rs.getDouble("Area"), rs.getDouble("Altitude"));
+                satellite.setSatellite_ID(rs.getInt("Satellite_id"));
 
-                } else {
-                    throw new DatabaseError("Satellite not found", "ID: " + id);
-                }
-            } catch (SQLException e) {
-                throw new DatabaseError("Database connection failed", e.getMessage());
+            } else {
+                throw new DatabaseError("Satellite not found", "ID: " + id);
             }
-            return satellite;
+        } catch (SQLException e) {
+            throw new DatabaseError("Database connection failed", e.getMessage());
         }
+        return satellite;
+    }
     //getSatelliteDataByName fetches satellite data based on the selected name:
     public static Satellite getSatelliteDataByName(String satelliteName) throws SQLException {
         try (Connection conn =DatabaseConnection.getConnection()) {
@@ -200,35 +200,31 @@ public class SatelliteDataBaseManager {
     }
 
     // Method to insert a new Satellite into the database
-        public void addSatellite(Satellite satellite) throws ValidationError, DatabaseError {
-            if (satellite.getMass() <= 0) {
-                throw new ValidationError("Invalid mass", "Mass must be positive. Given: " + satellite.getMass());
-            }
-            // Prevent duplicate SatelliteName
-            if (satelliteNameExists(satellite.getId())) {
-                throw new ValidationError("Duplicate Satellite Name", "A satellite with this name already exists: " + satellite.getId());
-            }
+    public void addSatellite(Satellite satellite) throws ValidationError, DatabaseError {
+        if (satellite.getMass() <= 0) {
+            throw new ValidationError("Invalid mass", "Mass must be positive. Given: " + satellite.getMass());
+        }
 
-            if (checkExistingSatellite(satellite.getId())) {
+        if (checkExistingSatellite(satellite.getId())) {
+            satellite.setSatellite_ID(getSatelliteIdByName(satellite.getId()));
+            updateSatellite(satellite);
+        }else {
+            String sql = "INSERT INTO \"Satellite\" (\"SatelliteName\", \"User_ID\", \"Mass\", \"Altitude\", \"Area\") " +
+                    "VALUES (?, ?, ?, ?, ?)";
+            try (Connection conn = DatabaseConnection.getConnection();
+                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setString(1, satellite.getId());
+                pstmt.setInt(2, satellite.getUser_Id());
+                pstmt.setDouble(3, satellite.getMass());
+                pstmt.setDouble(4, satellite.getAltitude());
+                pstmt.setDouble(5, satellite.getArea());
+                pstmt.executeUpdate();
                 satellite.setSatellite_ID(getSatelliteIdByName(satellite.getId()));
-                updateSatellite(satellite);
-            }else {
-                String sql = "INSERT INTO \"Satellite\" (\"SatelliteName\", \"User_ID\", \"Mass\", \"Altitude\", \"Area\") " +
-                        "VALUES (?, ?, ?, ?, ?)";
-                try (Connection conn = DatabaseConnection.getConnection();
-                     PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                    pstmt.setString(1, satellite.getId());
-                    pstmt.setInt(2, satellite.getUser_Id());
-                    pstmt.setDouble(3, satellite.getMass());
-                    pstmt.setDouble(4, satellite.getAltitude());
-                    pstmt.setDouble(5, satellite.getArea());
-                    pstmt.executeUpdate();
-                    satellite.setSatellite_ID(getSatelliteIdByName(satellite.getId()));
-                } catch (SQLException e) {
-                    throw new DatabaseError("Failed to insert satellite", e.getMessage());
-                }
+            } catch (SQLException e) {
+                throw new DatabaseError("Failed to insert satellite", e.getMessage());
             }
         }
+    }
     public static boolean checkExistingSatellite(String satelliteName) throws DatabaseError {
         String sql = "SELECT COUNT(*) AS count FROM \"Satellite\" WHERE \"SatelliteName\" = ? and \"User_ID\" = ?";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -250,60 +246,60 @@ public class SatelliteDataBaseManager {
 
 
     // New Method: Delete a Satellite by ID
-        public void deleteSatelliteById(int id) throws DatabaseError {
-            String sql = "DELETE FROM \"Satellite\" WHERE \"Satellite_ID\" = ?";
-            try (Connection conn = DatabaseConnection.getConnection();
-                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setInt(1, id);
-                int rowsAffected = pstmt.executeUpdate();
-                if (rowsAffected == 0) {
-                    throw new DatabaseError("Satellite deletion failed", "No satellite found with ID: " + id);
-                }
-            } catch (SQLException e) {
-                throw new DatabaseError("Database connection failed", e.getMessage());
+    public void deleteSatelliteById(int id) throws DatabaseError {
+        String sql = "DELETE FROM \"Satellite\" WHERE \"Satellite_ID\" = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            int rowsAffected = pstmt.executeUpdate();
+            if (rowsAffected == 0) {
+                throw new DatabaseError("Satellite deletion failed", "No satellite found with ID: " + id);
             }
+        } catch (SQLException e) {
+            throw new DatabaseError("Database connection failed", e.getMessage());
+        }
+    }
+
+    // New Method: Update a Satellite's Information
+    public void updateSatellite(Satellite satellite) throws ValidationError, DatabaseError {
+        if (satellite.getMass() <= 0) {
+            throw new ValidationError("Invalid mass", "Mass must be positive. Given: " + satellite.getMass());
         }
 
-        // New Method: Update a Satellite's Information
-        public void updateSatellite(Satellite satellite) throws ValidationError, DatabaseError {
-            if (satellite.getMass() <= 0) {
-                throw new ValidationError("Invalid mass", "Mass must be positive. Given: " + satellite.getMass());
+        String sql = "UPDATE public.\"Satellite\" SET \"SatelliteName\" = ?, \"User_ID\" = ?, \"Mass\" = ?, \"Altitude\" = ?, " +
+                "\"Area\" = ? WHERE \"Satellite_ID\" = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, satellite.getId());
+            pstmt.setLong(2, satellite.getUser_Id());
+            pstmt.setDouble(3, satellite.getMass());
+            pstmt.setDouble(4, satellite.getAltitude());
+            pstmt.setDouble(5, satellite.getArea());
+            pstmt.setInt(6, satellite.getSatellite_ID());
+            int rowsAffected = pstmt.executeUpdate();
+            if (rowsAffected == 0) {
+                throw new DatabaseError("Satellite update failed", "No satellite found with ID: " + satellite.getSatellite_ID());
             }
-
-            String sql = "UPDATE public.\"Satellite\" SET \"SatelliteName\" = ?, \"User_ID\" = ?, \"Mass\" = ?, \"Altitude\" = ?, " +
-                    "\"Area\" = ? WHERE \"Satellite_ID\" = ?";
-            try (Connection conn = DatabaseConnection.getConnection();
-                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setString(1, satellite.getId());
-                pstmt.setLong(2, satellite.getUser_Id());
-                pstmt.setDouble(3, satellite.getMass());
-                pstmt.setDouble(4, satellite.getAltitude());
-                pstmt.setDouble(5, satellite.getArea());
-                pstmt.setInt(6, satellite.getSatellite_ID());
-                int rowsAffected = pstmt.executeUpdate();
-                if (rowsAffected == 0) {
-                    throw new DatabaseError("Satellite update failed", "No satellite found with ID: " + satellite.getSatellite_ID());
-                }
-            } catch (SQLException e) {
-                throw new DatabaseError("Database connection failed", e.getMessage());
-            }
+        } catch (SQLException e) {
+            throw new DatabaseError("Database connection failed", e.getMessage());
         }
-        public int getSatelliteIdByName(String satelliteName) throws DatabaseError {
-            String sql = "SELECT \"Satellite_ID\" FROM public.\"Satellite\" WHERE \"SatelliteName\" = ? and \"User_ID\" = ?";
-            try (Connection conn = DatabaseConnection.getConnection();
-                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setString(1, satelliteName);
-                pstmt.setInt(2, SessionData.getUserID());
-                ResultSet rs = pstmt.executeQuery();
-                if (rs.next()) {
-                    return rs.getInt("Satellite_ID");
-                } else {
-                    throw new DatabaseError("Satellite not found", "Name: " + satelliteName);
-                }
-            } catch (SQLException e) {
-                throw new DatabaseError("Database connection failed", e.getMessage());
+    }
+    public int getSatelliteIdByName(String satelliteName) throws DatabaseError {
+        String sql = "SELECT \"Satellite_ID\" FROM public.\"Satellite\" WHERE \"SatelliteName\" = ? and \"User_ID\" = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, satelliteName);
+            pstmt.setInt(2, SessionData.getUserID());
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("Satellite_ID");
+            } else {
+                throw new DatabaseError("Satellite not found", "Name: " + satelliteName);
             }
+        } catch (SQLException e) {
+            throw new DatabaseError("Database connection failed", e.getMessage());
         }
+    }
     public String[] getSatelliteNamesAndIds() throws DatabaseError {
         String sql = "SELECT \"Satellite_ID\", \"SatelliteName\" FROM public.\"Satellite\" WHERE \"User_ID\" = ?";
 
@@ -353,18 +349,6 @@ public class SatelliteDataBaseManager {
         } catch (SQLException e) {
             System.out.println("Error deleting satellite: " + e.getMessage());
         }
-    private boolean satelliteNameExists(String name) throws DatabaseError {
-        String sql = "SELECT 1 FROM \"Satellite\" WHERE \"SatelliteName\" = ?";
-        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, name);
-            ResultSet rs = pstmt.executeQuery();
-            return rs.next();
-        } catch (SQLException e) {
-            throw new DatabaseError("Error checking existing SatelliteName", e.getMessage());
-        }
-    }
-
 
     }
 
