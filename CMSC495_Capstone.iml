@@ -12,5 +12,6 @@
     <orderEntry type="library" name="javafx-swt" level="project" />
     <orderEntry type="library" name="mssql-jdbc-12.10.0.jre8-sources" level="project" />
     <orderEntry type="library" name="jbcrypt-0.4" level="project" />
+    <orderEntry type="library" name="postgresql-42.7.5" level="project" />
   </component>
 </module>
