@@ -8,14 +8,21 @@
 
 package SatelliteSim;
 
+import java.sql.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.*;
-
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+//import org.apache.poi.ss.usermodel.*;
+//import org.apache.poi.ss.util.CellRangeAddress;
+//import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class SatelliteDataBaseManager {
 
@@ -101,7 +108,7 @@ public class SatelliteDataBaseManager {
                 writer.write("<Cell ss:StyleID=\"Header\"><Data ss:Type=\"String\">Area</Data></Cell>\n");
                 writer.write("<Cell ss:StyleID=\"Header\"><Data ss:Type=\"String\">Altitude</Data></Cell>\n");
                 writer.write("<Cell ss:StyleID=\"Header\"><Data ss:Type=\"String\">Period</Data></Cell>\n");
-                writer.write("<Cell ss:StyleID=\"Header\"><Data ss:Type=\"String\">Ballistics</Data></Cell>\n");
+               writer.write("<Cell ss:StyleID=\"Header\"><Data ss:Type=\"String\">Ballistics</Data></Cell>\n");
                 writer.write("<Cell ss:StyleID=\"Header\"><Data ss:Type=\"String\">TotalOrbits</Data></Cell>\n");
                 writer.write("<Cell ss:StyleID=\"Header\"><Data ss:Type=\"String\">ReentryFormattedTime</Data></Cell>\n");
                 writer.write("</Row>\n");
@@ -145,8 +152,6 @@ public class SatelliteDataBaseManager {
 
         System.out.println("Satellite data exported successfully to: " + filePath);
     }
-
-
 
     // Method to get a Satellite by ID
         public Satellite getSatelliteById(int id) throws DatabaseError {
@@ -346,11 +351,6 @@ public class SatelliteDataBaseManager {
         }
 
     }
-
-    public boolean isSatelliteNameExists(String satelliteName) throws DatabaseError {
-        return checkExistingSatellite(satelliteName);
-    }
-
 
 
 
