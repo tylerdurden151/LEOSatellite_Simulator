@@ -86,7 +86,7 @@ import javafx.scene.shape.Box;
     }
 
     public String getId() {
-        return id;
+        return this.id;
     }
 
     public double getMass() {

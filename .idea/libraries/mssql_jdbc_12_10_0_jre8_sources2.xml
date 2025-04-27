@@ -1,6 +1,8 @@
 <component name="libraryTable">
-  <library name="javafx-swt">
+  <library name="mssql-jdbc-12.10.0.jre8-sources">
     <CLASSES>
+      <root url="jar://$USER_HOME$/Desktop/FOUO/Java Projects/sqljdbc_12.10/enu/jars/mssql-jdbc-12.10.0.jre8.jar!/" />
+      <root url="jar://$USER_HOME$/Desktop/FOUO/Java Projects/sqljdbc_12.10/enu/jars/mssql-jdbc-12.10.0.jre11.jar!/" />
       <root url="jar://$USER_HOME$/Desktop/FOUO/Java Projects/Java FX (Mac Mini)/javafx-sdk-23.0.1/lib/javafx-swt.jar!/" />
       <root url="jar://$USER_HOME$/Desktop/FOUO/Java Projects/Java FX (Mac Mini)/javafx-sdk-23.0.1/lib/javafx.base.jar!/" />
       <root url="jar://$USER_HOME$/Desktop/FOUO/Java Projects/Java FX (Mac Mini)/javafx-sdk-23.0.1/lib/javafx.controls.jar!/" />
@@ -26,6 +28,9 @@
       <root url="file://$USER_HOME$/Desktop/FOUO/Java Projects/Java FX (Mac Mini)/javafx-sdk-23.0.1/lib" />
       <root url="file://$USER_HOME$/Desktop/FOUO/Java Projects/Java FX (Mac Mini)/javafx-sdk-23.0.1/lib" />
     </NATIVE>
-    <SOURCES />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/Desktop/FOUO/Java Projects/sqljdbc_12.10/enu/jars/mssql-jdbc-12.10.0.jre8-sources.jar!/" />
+      <root url="jar://$USER_HOME$/Desktop/FOUO/Java Projects/sqljdbc_12.10/enu/jars/mssql-jdbc-12.10.0.jre11-sources.jar!/" />
+    </SOURCES>
   </library>
 </component>
