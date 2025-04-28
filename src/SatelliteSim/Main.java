@@ -7,9 +7,7 @@
  *
  */
 
-//last edit done by Tim E 14:25 18 Apr 2025
-
-// Version 4.0
+//last edit done by Tim Eckart on 27 April
 
 package SatelliteSim;
 	
@@ -21,8 +19,16 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        // First UI (Login UI)
+        // On successful login, switch to the dropdown UI
+
+        SatelliteSimulatorLogin loginUI = new SatelliteSimulatorLogin();
+        loginUI.start(primaryStage);
+
+     loginUI.setOnLoginSuccess(() -> {
         UserInterface ui = new UserInterface();
         ui.build(primaryStage);
+    });
     }
 
     public static void main(String[] args) {
