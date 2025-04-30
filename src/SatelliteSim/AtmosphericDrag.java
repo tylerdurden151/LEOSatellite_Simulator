@@ -78,11 +78,13 @@ public class AtmosphericDrag {
         // Decay per orbit (m)
         return -da_dt * period;  // Negative sign indicates loss of altitude
     }
-    
+    /*
     //function test for Mitch M------------------------------------------------
     public static void main(String[] args) {
         Satellite testSat = new Satellite(1, "Mercury", 500, 4, 400_000);
         double decay = calculateDecayPerOrbit(testSat);
         System.out.printf("Decay per orbit: %.4f meters%n", decay);
     }
+
+     */
 }
