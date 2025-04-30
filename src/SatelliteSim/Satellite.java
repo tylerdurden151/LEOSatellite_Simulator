@@ -55,7 +55,7 @@ import javafx.scene.shape.Box;
 //Make Satellite Image
     private Box createVisual() {
         // Use area to estimate width/height visually (simplified to square face)
-        double size = Math.sqrt(area) * 3; // Scaling factor for visibility TONED down for better visual -Mitch
+        double size = 8; // Scaling factor for visibility TONED down for better visual -Mitch
         Box visual = new Box(size, size, size / 2);
 
         PhongMaterial material = new PhongMaterial();
