@@ -1,7 +1,7 @@
 /* Project name: CMSC495
  * File name: Satellite.java
  * Authors: Timothy Eckart, Tyler Blumenshine, Ricardo Gordon, Mitch Mclaughlin, Siddharth Patel
- * Date: 8 Apr 2025
+ * Date: 5 May 2025
  * Purpose: Represents a satellite's physical, visual, and orbital properties.
  */
 
@@ -9,7 +9,6 @@
 package SatelliteSim;
 
 import javafx.scene.image.Image;
-import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
 

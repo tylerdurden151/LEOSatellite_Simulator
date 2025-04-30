@@ -1,7 +1,7 @@
 /* Project name: CMSC495
  * File name: Retrograde.java
  * Authors: Timothy Eckart, Tyler Blumenshine, Ricardo Gordon, Mitch Mclaughlin, Siddharth Patel
- * Date: 8 Apr 2025
+ * Date: 5 May 2025
  * Purpose: Computes time to satellite re-entry and formats the timeframe for display.
  */
 
@@ -39,19 +39,4 @@ public class Retrograde {
         return String.format("%d years, %d months, %d days", wholeYears, months, days);
     }
 
-    /*
-    public static double calculateTimeToReentry(Satellite satellite) {
-    return new Retrograde(satellite).calculateTimeToReentry();
-}
-*/
-
-
-    /*
-    //function test for tyler B--------------------------------------
-    public static void main(String[] args) {
-        Satellite testSat = new Satellite(500, 400_000, 0, 4);
-        System.out.println();
-    }
-
-     */
 }

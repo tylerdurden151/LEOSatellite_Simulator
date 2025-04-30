@@ -1,7 +1,7 @@
 /* Project name: CMSC495
  * File name: Simulation.java
  * Authors: Timothy Eckart, Tyler Blumenshine, Ricardo Gordon, Mitch Mclaughlin, Siddharth Patel
- * Date: 8 Apr 2025
+ * Date: 5 May 2025
  * Purpose: Controls the 3D visualization and animation of the satellite orbiting Earth in the simulation.
  */
 
@@ -19,8 +19,6 @@ import javafx.scene.transform.Rotate;
 
 public class Simulation {
 
-    private static final float WIDTH = 1400;
-    private static final float HEIGHT = 1000;
     private double anchorX, anchorY;
     private double anchorAngleX = 0;
     private double anchorAngleY = 0;

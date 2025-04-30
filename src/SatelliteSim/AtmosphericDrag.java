@@ -1,7 +1,7 @@
 /* Project name: CMSC495
  * File name: AtmosphericDrag.java
  * Authors: Timothy Eckart, Tyler Blumenshine, Ricardo Gordon, Mitch Mclaughlin, Siddharth Patel
- * Date: 7 Apr 2025
+ * Date: 5 May 2025
  * Purpose: Calculates atmospheric density and orbital decay based on altitude and satellite properties.
  */
 
@@ -78,13 +78,5 @@ public class AtmosphericDrag {
         // Decay per orbit (m)
         return -da_dt * period;  // Negative sign indicates loss of altitude
     }
-    /*
-    //function test for Mitch M------------------------------------------------
-    public static void main(String[] args) {
-        Satellite testSat = new Satellite(1, "Mercury", 500, 4, 400_000);
-        double decay = calculateDecayPerOrbit(testSat);
-        System.out.printf("Decay per orbit: %.4f meters%n", decay);
-    }
 
-     */
 }

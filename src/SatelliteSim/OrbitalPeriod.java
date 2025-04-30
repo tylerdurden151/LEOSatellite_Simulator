@@ -1,7 +1,7 @@
 /* Project name: CMSC495
  * File name: OrbitalPeriod.java
  * Authors: Timothy Eckart, Tyler Blumenshine, Ricardo Gordon, Mitch Mclaughlin, Siddharth Patel
- * Date: 8 Apr 2025
+ * Date: 5 May 2025
  * Purpose: Calculates the orbital period and circular speed for a satellite.
  */
 
@@ -41,12 +41,4 @@ public class OrbitalPeriod {
         return Math.sqrt(MU_EARTH / radius);
     }
 
-    /*
-    //function test for tyler B----------------------------------------------
-    public static void main(String[] args) {
-        Satellite testSat = new Satellite(500, 400_000, 0, 4);
-        System.out.println();
-    }
-
-     */
 }

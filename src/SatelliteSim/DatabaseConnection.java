@@ -1,3 +1,10 @@
+/* Project name: CMSC495
+ * File name: DatabaseConnection.java
+ * Authors: Timothy Eckart, Tyler Blumenshine, Ricardo Gordon, Mitch Mclaughlin, Siddharth Patel
+ * Date: 5 May 2025
+ * Purpose: Connection database with Postgre SQL
+ */
+
 package SatelliteSim;
 import java.sql.Connection;
 import java.sql.DriverManager;

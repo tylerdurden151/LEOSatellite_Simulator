@@ -1,14 +1,13 @@
 /* Project name: CMSC495
  * File name: SatelliteDataBaseManager.java
  * Authors: Timothy Eckart, Tyler Blumenshine, Ricardo Gordon, Mitch Mclaughlin, Siddharth Patel
- * Date: 8 Apr 2025
+ * Date: 5 May 2025
  * Purpose: Manages database operations such as inserting, retrieving, and deleting satellite records.
  */
 
 
 package SatelliteSim;
 
-import java.sql.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import java.io.File;
@@ -18,11 +17,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
-//import org.apache.poi.ss.usermodel.*;
-//import org.apache.poi.ss.util.CellRangeAddress;
-//import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 
 public class SatelliteDataBaseManager {
 
@@ -351,8 +346,6 @@ public class SatelliteDataBaseManager {
         }
 
     }
-
-
 
 }
 
