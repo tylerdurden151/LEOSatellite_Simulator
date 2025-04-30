@@ -1,0 +1,19 @@
+Compile Your Application
+Ensure all .java files are compiled into .class files
+
+javac -d bin src/*.java
+
+
+C:\Users\rgord\IdeaProjects\LEOSatellite_Simulator\out\artifacts\CMSC495_Capstone
+
+javac --module-path "C:\javafx-sdk\lib" --add-modules=javafx.controls,javafx.fxml,javafx.graphics src/SatelliteSim/*.java
+
+javac --module-path "C:\Program Files\openjfx-24_windows-x64_bin-sdk\javafx-sdk-24\lib" --add-modules javafx.controls,javafx.fxml -cp .;"C:\Users\rgord\FOUO\Java Projects\jbcrypt-0.4.jar";"C:\Users\rgord\FOUO\Java Projects\postgresql-42.7.5.jar" src/SatelliteSim/*.java
+
+
+
+jar cfm LEOSatellite_Simulator.jar manifest.txt -C . SatelliteSim
+
+java --module-path "C:\Program Files\openjfx-24_windows-x64_bin-sdk\javafx-sdk-24\lib" --add-modules javafx.controls,javafx.fxml -jar LEOSatellite_Simulator.jar
+
+https://maven.apache.org/download.cgi
