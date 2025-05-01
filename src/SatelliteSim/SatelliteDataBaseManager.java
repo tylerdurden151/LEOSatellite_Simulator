@@ -103,7 +103,7 @@ public class SatelliteDataBaseManager {
                 writer.write("<Column ss:AutoFitWidth=\"1\" ss:Width=\"50\"/>\n"); // TotalOrbits column
                 writer.write("<Column ss:AutoFitWidth=\"1\" ss:Width=\"120\"/>\n"); // ReentryFormattedTime column
 // Write the header row
-                
+
                 writer.write("<Row>\n");
                 writer.write("<Cell ss:StyleID=\"Header\"><Data ss:Type=\"String\">Satellite Name</Data></Cell>\n");
                 writer.write("<Cell ss:StyleID=\"Header\"><Data ss:Type=\"String\">Mass</Data></Cell>\n");
