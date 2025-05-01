@@ -7,7 +7,7 @@
  *
  */
 
-//last edit done by Tim Eckart on 27 April
+//last edit done by Tim Eckart on 30 April
 
 package SatelliteSim;
 	
