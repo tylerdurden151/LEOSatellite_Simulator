@@ -2,7 +2,6 @@
   <library name="jars">
     <CLASSES>
       <root url="file://$PROJECT_DIR$/../sqljdbc_12.10.0.0_enu/sqljdbc_12.10/enu/jars" />
-      <root url="jar://$USER_HOME$/Desktop/FOUO/Java Projects/postgresql-42.7.5.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
